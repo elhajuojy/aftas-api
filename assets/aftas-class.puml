@@ -1,0 +1,81 @@
+@startuml
+'https://plantuml.com/class-diagram
+class BaseEntity {
+}
+
+class Member {
+    - Integer num
+    - String name
+    - String familyName
+    - LocalDateTime accessionDate
+    - String nationality
+    - IdentityDocumentType identityDocumentType
+    - String identityNumber
+    - Collection<Competition> competitions
+    - Collection<Hunting> huntings
+}
+Member --|> BaseEntity
+
+class Competition {
+    - String code
+    - Date date
+    - Time startTime
+    - Time endTime
+    - Integer numberOfParticipants
+    - String location
+    - Double amount
+    - Collection<Member> members
+    - Collection<Hunting> huntings
+}
+Competition --|> BaseEntity
+
+class Hunting {
+    - Integer idHunting
+    - Integer numberOfFish
+    - Fish fish
+    - Member member
+    - Competition competition
+}
+Hunting --|> BaseEntity
+
+class Fish {
+    - String Name
+    - Double averageWeight
+    - Level level
+    - Collection<Hunting> huntings
+}
+Fish --|> BaseEntity
+
+class Level {
+    - String code
+    - String description
+    - Integer points
+    - Collection<Level> levels
+}
+Level --|> BaseEntity
+
+class Ranking {
+    - RankingId id
+    - Integer rank
+    - Integer score
+    - Member member
+    - Competition competition
+}
+Ranking --|> BaseEntity
+
+class RankingId {
+    - UUID memberId
+    - UUID competitionId
+}
+
+Member "1" -- "0..*" Hunting : has
+Member "1" -- "0..*" Competition : participates
+Competition "1" -- "0..*" Hunting : has
+Fish "1" -- "0..*" Hunting : caught in
+Hunting "1" -- "1" Member : done by
+Hunting "1" -- "1" Competition : done in
+Ranking "1" -- "1" Member : has
+Ranking "1" -- "1" Competition : in
+Level "1" -- "0..*" Fish : has
+
+@enduml

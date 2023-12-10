@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  aflas_db:
+    image: postgres
+    environment:
+      POSTGRES_USER: ${USER}
+      PGUSER: ${USER}
+      PGPASSWORD: ${PASSWORD}
+      POSTGRES_PASSWORD: ${PASSWORD}
+      POSTGRES_DB: ${DATABASE}
+      PGDATA: /data/postgres
+    #    volumes:
+    #      - db:/data/postgres
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - db
+    restart: unless-stopped
+
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  db:
