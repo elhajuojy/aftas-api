@@ -1,10 +1,7 @@
 package ma.aftas.aflasclubapi.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ma.aftas.aflasclubapi.enums.IdentityDocumentType;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -14,6 +11,7 @@ import java.util.Collection;
 import java.util.Date;
 
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,6 +24,7 @@ public class Member extends BaseEntity{
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime accessionDate;
     private String nationality   ;
+    private String nationalityFlag;
     @Enumerated(EnumType.STRING)
     private IdentityDocumentType identityDocumentType;
     private String identityNumber;
@@ -38,12 +37,5 @@ public class Member extends BaseEntity{
 
     @OneToMany(mappedBy = "member")
     private Collection<Hunting> huntings = new ArrayList<>();
-
-
-
-
-
-
-
 
 }

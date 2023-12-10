@@ -10,4 +10,6 @@ public class AftasClubApiApplication {
         SpringApplication.run(AftasClubApiApplication.class, args);
     }
 
+
+
 }

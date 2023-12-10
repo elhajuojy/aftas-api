@@ -4,15 +4,13 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,7 +20,7 @@ public class Fish extends BaseEntity {
     private Double averageWeight;
     @ManyToOne(cascade = CascadeType.ALL)
     private Level level ;
-    @OneToMany(mappedBy = "")
+    @OneToMany(mappedBy = "fish")
     private Collection<Hunting> huntings  = new ArrayList<>();
 
 

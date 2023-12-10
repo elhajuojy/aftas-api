@@ -1,16 +1,14 @@
 package ma.aftas.aflasclubapi.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,7 +22,7 @@ public class Competition extends BaseEntity{
     private String location;
     private Double amount;
     @ManyToMany
-    @JoinTable(name = "Ranking",
+    @JoinTable(name = "ranking",
     joinColumns = @JoinColumn(name = "competition_id"),
             inverseJoinColumns = @JoinColumn(name = "member_id")
     )
