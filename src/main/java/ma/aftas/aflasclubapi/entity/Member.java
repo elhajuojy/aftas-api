@@ -3,6 +3,7 @@ package ma.aftas.aflasclubapi.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import ma.aftas.aflasclubapi.enums.IdentityDocumentType;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.Date;
 @Data
 public class Member extends BaseEntity{
 
+    @UniqueElements
     private Integer num;
     private String name;
     private String familyName;

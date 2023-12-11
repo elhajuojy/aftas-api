@@ -20,7 +20,7 @@ public class MemberDto {
     private Integer num;
     private String name;
     private String familyName;
-    private String nationality   ;
+    private String nationality ;
     @Enumerated(EnumType.STRING)
     private IdentityDocumentType identityDocumentType;
     private String identityNumber;

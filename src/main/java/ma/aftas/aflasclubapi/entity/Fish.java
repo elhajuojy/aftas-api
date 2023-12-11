@@ -16,13 +16,12 @@ import java.util.Collection;
 @NoArgsConstructor
 @Data
 public class Fish extends BaseEntity {
+
     private String Name;
     private Double averageWeight;
     @ManyToOne(cascade = CascadeType.ALL)
     private Level level ;
     @OneToMany(mappedBy = "fish")
     private Collection<Hunting> huntings  = new ArrayList<>();
-
-
 
 }

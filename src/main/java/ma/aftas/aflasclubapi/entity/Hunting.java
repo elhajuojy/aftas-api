@@ -12,7 +12,7 @@ import lombok.*;
 public class Hunting extends BaseEntity {
     private Integer idHunting ;
     private Integer numberOfFish;
-    @ManyToOne()
+    @ManyToOne
     private Fish fish;
     @ManyToOne
     private Member member;

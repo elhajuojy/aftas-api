@@ -13,7 +13,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public  class RankingId implements Serializable {
+public  class  RankingId implements Serializable {
 
         private static final long serialVersionUUID = 1L;
         @Column(name = "member_id")
