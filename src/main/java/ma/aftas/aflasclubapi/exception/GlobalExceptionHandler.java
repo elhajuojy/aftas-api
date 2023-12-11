@@ -1,6 +1,7 @@
 package ma.aftas.aflasclubapi.exception;
 
 
+import ma.aftas.aflasclubapi.exception.business.BadRequestException;
 import ma.aftas.aflasclubapi.exception.response.ErrorResponse;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Collections;
 import java.util.Map;
@@ -25,6 +27,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorResponse errorRes = new ErrorResponse("400", HttpStatus.BAD_REQUEST, "");
         errorRes.setMessage(ex.getMessage());
         return ResponseEntity.badRequest().body(errorRes);
+    }
+
+    @ExceptionHandler({
+            BadRequestException.class
+    })
+    public ResponseEntity<ErrorResponse> badRequestException(BadRequestException exception){
+
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage(exception.getMessage());
+        errorResponse.setHorodatage(LocalDateTime.now());
+        errorResponse.setStatus("400");
+        errorResponse.setStatus(HttpStatus.BAD_REQUEST.toString());
+        return ResponseEntity.badRequest().body(errorResponse);
+
+
     }
 
     @ExceptionHandler({

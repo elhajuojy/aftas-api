@@ -1,12 +1,16 @@
 package ma.aftas.aflasclubapi.web.service.impl;
 
+import com.github.javafaker.Faker;
 import io.swagger.v3.oas.annotations.servers.Server;
 import jakarta.transaction.Transactional;
+import lombok.extern.log4j.Log4j2;
 import ma.aftas.aflasclubapi.dto.*;
 import ma.aftas.aflasclubapi.entity.Competition;
+import ma.aftas.aflasclubapi.exception.business.BadRequestException;
 import ma.aftas.aflasclubapi.mappers.CompetitionMapper;
 import ma.aftas.aflasclubapi.web.repository.CompetitionRepository;
 import ma.aftas.aflasclubapi.web.service.CompetitionService;
+import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -20,13 +24,19 @@ import java.util.Map;
 
 @Service
 @Transactional
+@Log4j2
 public class CompetitionServiceImpl implements CompetitionService {
     private final CompetitionRepository competitionRepository;
     private final CompetitionMapper competitionMapper;
+    private Faker faker;
+
+    Logger logger = org.slf4j.LoggerFactory.getLogger(CompetitionServiceImpl.class);
 
     public CompetitionServiceImpl(CompetitionRepository competitionRepository) {
         this.competitionRepository = competitionRepository;
         this.competitionMapper = CompetitionMapper.INSTANCE;
+        this.faker = new Faker();
+
     }
 
     @Override
@@ -50,14 +60,21 @@ public class CompetitionServiceImpl implements CompetitionService {
                 errors.put("amount","Montant de competition est obligatoire");
             }
             if (!errors.isEmpty()){
-                throw new IllegalArgumentException(errors.toString());
+                throw new BadRequestException(errors.toString());
             }
         }
 
+        Competition competition = new Competition();
+        competition = this.competitionMapper.toEntity(competitionRequestDto);
+        competition.setCode(faker.code().isbn10());
+        competition.setNumberOfParticipants(0);
+        logger.info("ajouter competition  code "+competition.getCode());
 
-        return this.competitionMapper.toDto(this.competitionRepository.save(
-                this.competitionMapper.toEntity(competitionRequestDto)
-        ));
+
+
+        return this.competitionMapper.toDto(this.competitionRepository.save(competition));
+
+
     }
 
     @Override

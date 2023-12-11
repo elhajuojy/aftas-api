@@ -1,6 +1,7 @@
 package ma.aftas.aflasclubapi.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import ma.aftas.aflasclubapi.enums.IdentityDocumentType;
 import org.hibernate.validator.constraints.UniqueElements;
@@ -19,7 +20,8 @@ import java.util.Date;
 @Data
 public class Member extends BaseEntity{
 
-    @UniqueElements
+    @NotNull
+    @Column(unique = true)
     private Integer num;
     private String name;
     private String familyName;
