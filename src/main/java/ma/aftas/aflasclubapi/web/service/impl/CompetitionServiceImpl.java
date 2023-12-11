@@ -55,7 +55,6 @@ public class CompetitionServiceImpl implements CompetitionService {
         }
 
 
-
         return this.competitionMapper.toDto(this.competitionRepository.save(
                 this.competitionMapper.toEntity(competitionRequestDto)
         ));
