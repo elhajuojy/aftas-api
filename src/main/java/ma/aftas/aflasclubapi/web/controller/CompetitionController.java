@@ -5,6 +5,7 @@ import ma.aftas.aflasclubapi.dto.CompetitionDto;
 import ma.aftas.aflasclubapi.dto.CompetitionRequestDto;
 import ma.aftas.aflasclubapi.web.service.CompetitionService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +23,13 @@ public class CompetitionController {
     }
 
     //TODO: Ajout d’une compétition
-    @PutMapping()
+    @PostMapping()
     public ResponseEntity<CompetitionDto> ajouterCompetition(
             @RequestBody @Validated CompetitionRequestDto competitionRequestDto){
 
-        return  ResponseEntity.ok(
-                this.competitionService.ajouterCompetition(competitionRequestDto)
-        );
+        return new ResponseEntity<CompetitionDto>
+                (this.competitionService.ajouterCompetition(competitionRequestDto),
+                        HttpStatus.CREATED);
     }
 
     //TODO: Lister les compétitions avec un filtre (en cours, fermé)
