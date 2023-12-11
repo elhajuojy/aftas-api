@@ -2,8 +2,11 @@ package ma.aftas.aflasclubapi.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -15,9 +18,10 @@ import java.util.Date;
 @Data
 public class Competition extends BaseEntity{
     private String code ;
-    private Date date;
-    private Time startTime;
-    private Time endTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate date;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private Integer numberOfParticipants ;
     private String location;
     private Double amount;
@@ -30,10 +34,9 @@ public class Competition extends BaseEntity{
     @OneToMany(mappedBy = "competition")
     private Collection<Hunting> huntings = new ArrayList<>();
 
-
-
-
-
+    public Integer getNumberOfParticipants() {
+        return this.getMembers().size();
+    }
 
 
 }
