@@ -60,7 +60,7 @@ public class CompetitionServiceImpl implements CompetitionService {
                 errors.put("amount","Montant de competition est obligatoire");
             }
             if (!errors.isEmpty()){
-                throw new BadRequestException(errors.toString());
+                throw new BadRequestException("Input validation exception's ",errors);
             }
         }
 

@@ -36,8 +36,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setMessage(exception.getMessage());
+        errorResponse.setDetails(exception.getDetails());
         errorResponse.setHorodatage(LocalDateTime.now());
-        errorResponse.setStatus("400");
+        errorResponse.setCode("400");
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.toString());
         return ResponseEntity.badRequest().body(errorResponse);
 
