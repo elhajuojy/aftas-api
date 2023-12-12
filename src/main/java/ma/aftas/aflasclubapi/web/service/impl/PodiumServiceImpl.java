@@ -62,7 +62,7 @@ public class PodiumServiceImpl implements PodiumService {
         podiumCompetitionDto.setEndTime(competition.get().getEndTime());
         AftasUtil.PagePathQueryChecker pagePathQueryChecker = getPagePathQueryChecker(queryParams);
         PageRequest pageRequest;
-        //TODO : SORT BY SCORE QUERY PARAMETER
+        // : SORT BY SCORE QUERY PARAMETER
 
         pageRequest = PageRequest.of(pagePathQueryChecker.page(), pagePathQueryChecker.size(), querySortPathExtracter(queryParams));
         // : FIND ALL RELATED MEMBER'S TO THIS COMPLETION AND THEIR  RANKING ALSO

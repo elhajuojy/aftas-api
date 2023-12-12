@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public interface RankingRepository extends JpaRepository<Ranking, UUID> {
 
-    //TODO : OPTIONAL FIND ALL RANKING BY COMPETITION CODE
+    // : OPTIONAL FIND ALL RANKING BY COMPETITION CODE
     @Query("SELECT U FROM Ranking U WHERE U.competition.code =:code")
     Page<Ranking> findRankingsByCompetitionId(@Param("code")String code, Pageable pageable);
 

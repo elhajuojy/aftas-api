@@ -18,6 +18,7 @@ public class PodiumController {
         this.podiumService = podiumService;
     }
 
+    //: AFFICHE PODIUM COMPETITION
     @GetMapping("")
     public ResponseEntity<PodiumCompetitionDto> affichePodiumCompetition(@PathVariable("code") String code ,
                                                                          @RequestParam Map<String,String> queryParams){
