@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class MemberCompetitionRequest {
 
-
 //    private String membreNum;
     private String identityNumber ;
-    private String codeCometition;
+    private String codeCompetition;
 }

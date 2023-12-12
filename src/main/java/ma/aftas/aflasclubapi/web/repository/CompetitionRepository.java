@@ -16,14 +16,17 @@ import java.util.UUID;
 public interface CompetitionRepository extends JpaRepository<Competition, UUID> {
 
     @Query("SELECT U FROM Competition U WHERE  U.date < :localDate")
-    Page<Competition> listerLesCompetitionFerme(@Param("localDate")LocalDate localDate, Pageable pageable);
+    Page<Competition> listerLesCompetitionFerme(@Param("localDate") LocalDate localDate, Pageable pageable);
 
     @Query("SELECT U FROM Competition U WHERE  U.date > :localDate")
-    Page<Competition> listerLesCompetitionAvenir(@Param("localDate") LocalDate localDate ,  Pageable pageable);
+    Page<Competition> listerLesCompetitionAvenir(@Param("localDate") LocalDate localDate, Pageable pageable);
 
     @Query("SELECT U FROM Competition U WHERE  U.date = :localDate")
-    Page<Competition> listerLesCompetitionEncour(@Param("localDate") LocalDate localDate ,  Pageable pageable);
+    Page<Competition> listerLesCompetitionEncour(@Param("localDate") LocalDate localDate, Pageable pageable);
 
     @Query("SELECT U FROM Competition U WHERE  U.date = :localDate")
-    Optional<Competition> listerLesCompetitionParDate(@Param("localDate") LocalDate localDate );
+    Optional<Competition> listerLesCompetitionParDate(@Param("localDate") LocalDate localDate);
+
+    @Query("SELECT U FROM Competition U WHERE  U.code = :code")
+    Optional<Competition> listerLesCompetitionParCode(@Param("code") String code);
 }

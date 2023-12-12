@@ -34,11 +34,12 @@ public class Member extends BaseEntity{
     private IdentityDocumentType identityDocumentType;
     @Column(unique = true)
     private String identityNumber;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "Ranking",
             joinColumns = @JoinColumn(name = "member_id"),
             inverseJoinColumns = @JoinColumn(name = "competition_id")
     )
+
     private Collection<Competition> competitions = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")

@@ -12,4 +12,5 @@ public interface MemberRepository extends JpaRepository<Member, UUID> {
     Optional<Member> findByIdentityNumber(String identityNumber);
 
 
+
 }

@@ -25,7 +25,7 @@ public class Competition extends BaseEntity{
     private Integer numberOfParticipants ;
     private String location;
     private Double amount;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "ranking",
     joinColumns = @JoinColumn(name = "competition_id"),
             inverseJoinColumns = @JoinColumn(name = "member_id")

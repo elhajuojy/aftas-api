@@ -1,10 +1,7 @@
 package ma.aftas.aflasclubapi.web.controller;
 
 
-import ma.aftas.aflasclubapi.dto.CompetitionDto;
-import ma.aftas.aflasclubapi.dto.CompetitionRequestDto;
-import ma.aftas.aflasclubapi.dto.PodiumCompetitionDto;
-import ma.aftas.aflasclubapi.dto.PodiumDto;
+import ma.aftas.aflasclubapi.dto.*;
 import ma.aftas.aflasclubapi.web.service.CompetitionService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -35,6 +32,17 @@ public class CompetitionController {
                         HttpStatus.CREATED);
     }
 
+
+    @PostMapping("/{code}/members")
+    public ResponseEntity<MemberCompetitionResponse> ajouterMembreDansCompetition(
+            @PathVariable("code") String code ,
+            @RequestBody @Validated MemberCompetitionRequest memberCompetitionRequest){
+
+        return new ResponseEntity<MemberCompetitionResponse>
+                (this.competitionService.inscriptionMembreDansCompetition(memberCompetitionRequest),
+                        HttpStatus.CREATED);
+    }
+
     //: Lister les compétitions avec un filtre (en cours, fermé)
     //http:localhost://8080/api/v1/competitions?status=ferme
     @GetMapping
@@ -53,6 +61,9 @@ public class CompetitionController {
 
         return ResponseEntity.ok(this.competitionService.affichePodiumCompetition(code ,queryParams));
     }
+
+
+
 
     //TODO : Insérer le résultat de la compétition du jour (member' id , fish id , )
 
