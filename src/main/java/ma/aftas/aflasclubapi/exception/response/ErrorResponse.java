@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public class ErrorResponse {
     @Schema(description = "Detail de l'erreur")
     private String message;
     @Schema(description = "Detail de l'erreur ce form de Map<String , String >")
-    private Map<String,String> details ;
+    private Map<String,String> details  = new HashMap<>();
 
 
     @Schema()
