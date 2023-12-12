@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 @Data
 public class MemberDto {
 
-    @NotNull
     private String name;
     @NotNull
     private String familyName;

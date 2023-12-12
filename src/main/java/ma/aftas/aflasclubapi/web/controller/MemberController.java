@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/members")
 public class MemberController {
 
-    //TODO: Inscription d’un membre dans une compétition
+    //: Inscription d’un membre dans une compétition
     // (Chercher le membre et l'insérer s’il n’existe pas)
     private MemberService memberService ;
 

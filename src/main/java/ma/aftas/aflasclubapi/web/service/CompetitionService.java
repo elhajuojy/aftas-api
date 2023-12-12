@@ -11,8 +11,7 @@ public interface CompetitionService {
     public CompetitionDto ajouterCompetition(CompetitionRequestDto competitionRequestDto);
     public MemberCompetitionResponse inscriptionMembreDansCompetition(MemberCompetitionRequest memberCompetitionRequest);
     public Page<CompetitionDto> ListerLesCompetition(Map<String, String> queryParams);
-    public Page<PodiumDto> affichePodium(Map<String,String> queryParams);
-    public PodiumCompetitionDto affichePodiumCompetition(String code ,Map<String,String> queryParams);
+
 
 }
 
