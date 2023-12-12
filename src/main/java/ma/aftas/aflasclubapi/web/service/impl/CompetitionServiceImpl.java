@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import ma.aftas.aflasclubapi.dto.*;
 import ma.aftas.aflasclubapi.entity.Competition;
+import ma.aftas.aflasclubapi.exception.business.AlreadyExistsException;
 import ma.aftas.aflasclubapi.exception.business.BadRequestException;
 import ma.aftas.aflasclubapi.mappers.CompetitionMapper;
 import ma.aftas.aflasclubapi.web.repository.CompetitionRepository;
@@ -42,6 +43,28 @@ public class CompetitionServiceImpl implements CompetitionService {
     @Override
     public CompetitionDto ajouterCompetition(CompetitionRequestDto competitionRequestDto) {
 //        List<String> errors = new ArrayList<>();
+        ajouterCompetitionValidationDto(competitionRequestDto);
+
+        // : CHECK IF THERE'S ALREADY EVENT IN THE SAME DATE IF EXIT'S THROW ALREADY RESERVED EXCEPTION
+        if(this.competitionRepository.listerLesCompetitionParDate(competitionRequestDto.getDate()).isPresent()){
+            throw  new AlreadyExistsException("THERE'S ALREADY COMPETITION PLANNED IN THIS DATE THAT YOU HAVE PROVIDED ");
+        }
+
+        Competition competition  = this.competitionMapper.toEntity(competitionRequestDto);
+        //Todo:  code pattern -> ims-22-12-23
+        String code = competition.getLocation() + competition.getDate();
+        competition.setCode(code);
+        competition.setNumberOfParticipants(0);
+        logger.info("ajouter competition  code "+competition.getCode());
+
+
+
+        return this.competitionMapper.toDto(this.competitionRepository.save(competition));
+
+
+    }
+
+    private void ajouterCompetitionValidationDto(CompetitionRequestDto competitionRequestDto) {
         Map<String,String> errors = new HashMap<>();
         if (competitionRequestDto != null){
             if (competitionRequestDto.getDate() == null){
@@ -63,22 +86,12 @@ public class CompetitionServiceImpl implements CompetitionService {
                 throw new BadRequestException("Input validation exception's ",errors);
             }
         }
-
-        Competition competition = new Competition();
-        competition = this.competitionMapper.toEntity(competitionRequestDto);
-        competition.setCode(faker.code().isbn10());
-        competition.setNumberOfParticipants(0);
-        logger.info("ajouter competition  code "+competition.getCode());
-
-
-
-        return this.competitionMapper.toDto(this.competitionRepository.save(competition));
-
-
     }
 
     @Override
-    public MemberCompetitionResponse inscriptionMemberDansCompetition(MemberDto memberDto) {
+    public MemberCompetitionResponse inscriptionMembreDansCompetition(MemberCompetitionRequest memberCompetitionRequest) {
+        //TODO : inscription Member Dans une Competition (check si membre exists ou non  )
+
         return null;
     }
 
@@ -123,7 +136,18 @@ public class CompetitionServiceImpl implements CompetitionService {
     }
 
     @Override
-    public Page<PodiumDto> affichePoduim(Map<String, String> queryParams) {
+    public Page<PodiumDto> affichePodium(Map<String, String> queryParams) {
+        //TODO: AFFICHE PODUIM
         return null;
     }
+
+    @Override
+    public PodiumCompetitionDto affichePodiumCompetition(String code, Map<String, String> queryParams) {
+        PodiumCompetitionDto podiumCompetitionDto = new PodiumCompetitionDto();
+        podiumCompetitionDto.setCode(code);
+        //TODO : FIND ALL RELATED MEMBER'S TO THIS COMPLETION AND THEIR  RANKING ALSO
+        return podiumCompetitionDto;
+    }
+
+
 }

@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 @Component
@@ -69,7 +68,7 @@ public class ApplicationRunner implements CommandLineRunner {
         Collection<Competition> competitions = fakeCompetitions() ;
         Collection<Member> members = Stream.of(faker.name(),faker.name(),faker.name()).map(
                 name -> {
-                    //TODO : SAVE THOSE TO DATABASE FOR TEST
+                    // : SAVE THOSE TO DATABASE FOR TEST
                     //MEMBER INFORMATION
                     Member member = new Member();
                     member.setName(name.firstName());
@@ -84,7 +83,7 @@ public class ApplicationRunner implements CommandLineRunner {
                     member.setIdentityNumber(faker.idNumber().valid());
                     member.setVersion("1");
                     member.setAccessionDate(LocalDateTime.now());
-                    //TODO GETTING COMPETITION WHERE WE CAN REGISTER
+                    // GETTING COMPETITION WHERE WE CAN REGISTER
                     member.setCompetitions(competitions);
                     return this.memberRepository.save(member);
                 }

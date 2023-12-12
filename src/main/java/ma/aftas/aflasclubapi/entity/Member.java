@@ -20,8 +20,9 @@ import java.util.Date;
 @Data
 public class Member extends BaseEntity{
 
-    @NotNull
-    @Column(unique = true)
+//    @NotNull(message = "Num unique number must not be empty or repeated ")
+//    @Column(unique = true)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer num;
     private String name;
     private String familyName;
@@ -31,6 +32,7 @@ public class Member extends BaseEntity{
     private String nationalityFlag;
     @Enumerated(EnumType.STRING)
     private IdentityDocumentType identityDocumentType;
+    @Column(unique = true)
     private String identityNumber;
     @ManyToMany
     @JoinTable(name = "Ranking",

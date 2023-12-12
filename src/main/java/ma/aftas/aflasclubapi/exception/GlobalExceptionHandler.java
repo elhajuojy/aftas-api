@@ -1,7 +1,9 @@
 package ma.aftas.aflasclubapi.exception;
 
 
+import ma.aftas.aflasclubapi.exception.business.AlreadyExistsException;
 import ma.aftas.aflasclubapi.exception.business.BadRequestException;
+import ma.aftas.aflasclubapi.exception.business.UserNotFoundException;
 import ma.aftas.aflasclubapi.exception.response.ErrorResponse;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpHeaders;
@@ -22,8 +24,19 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({Exception.class})
+    @ExceptionHandler({Exception.class, UserNotFoundException.class , AlreadyExistsException.class})
     public ResponseEntity<Object> globalExceptionHundler(Exception ex) {
+        ErrorResponse errorRes = new ErrorResponse("400", HttpStatus.BAD_REQUEST, "");
+        errorRes.setMessage(ex.getMessage());
+        return ResponseEntity.badRequest().body(errorRes);
+    }
+
+
+
+
+
+    @ExceptionHandler({NullPointerException.class})
+    public ResponseEntity<ErrorResponse> globalExceptionHundler(NullPointerException ex) {
         ErrorResponse errorRes = new ErrorResponse("400", HttpStatus.BAD_REQUEST, "");
         errorRes.setMessage(ex.getMessage());
         return ResponseEntity.badRequest().body(errorRes);
@@ -44,6 +57,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     }
+
+
 
     @ExceptionHandler({
             IllegalArgumentException.class

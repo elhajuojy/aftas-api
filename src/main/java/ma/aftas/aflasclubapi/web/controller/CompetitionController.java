@@ -3,6 +3,8 @@ package ma.aftas.aflasclubapi.web.controller;
 
 import ma.aftas.aflasclubapi.dto.CompetitionDto;
 import ma.aftas.aflasclubapi.dto.CompetitionRequestDto;
+import ma.aftas.aflasclubapi.dto.PodiumCompetitionDto;
+import ma.aftas.aflasclubapi.dto.PodiumDto;
 import ma.aftas.aflasclubapi.web.service.CompetitionService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -22,7 +25,7 @@ public class CompetitionController {
         this.competitionService = competitionService;
     }
 
-    //TODO: Ajout d’une compétition
+    //: Ajout d’une compétition
     @PostMapping()
     public ResponseEntity<CompetitionDto> ajouterCompetition(
             @RequestBody @Validated CompetitionRequestDto competitionRequestDto){
@@ -32,7 +35,7 @@ public class CompetitionController {
                         HttpStatus.CREATED);
     }
 
-    //TODO: Lister les compétitions avec un filtre (en cours, fermé)
+    //: Lister les compétitions avec un filtre (en cours, fermé)
     //http:localhost://8080/api/v1/competitions?status=ferme
     @GetMapping
     public ResponseEntity<Page<CompetitionDto>> listCompetitions(@RequestParam Map<String,String> queryParams){
@@ -43,7 +46,15 @@ public class CompetitionController {
 
     }
 
-    //TODO: Afficher le podium competitions/[x]
+    //: Afficher le podium competitions/[x]
+    @GetMapping("/{code}/podium")
+    public ResponseEntity<PodiumCompetitionDto> affichePodiumCompetition(@PathVariable("code") String code ,
+                                                                        @RequestParam Map<String,String> queryParams){
 
-    //TODO : Insérer le résultat de la compétition du jour
+        return ResponseEntity.ok(this.competitionService.affichePodiumCompetition(code ,queryParams));
+    }
+
+    //TODO : Insérer le résultat de la compétition du jour (member' id , fish id , )
+
+
 }
