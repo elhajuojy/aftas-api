@@ -108,10 +108,10 @@ public class ApplicationRunner implements CommandLineRunner {
             competition.setEndTime(LocalTime.parse("17:00"));
             competition.setNumberOfParticipants(competition.getNumberOfParticipants());
             competition.setLocation(moroccoCityCodes.get("NDR"));
-            //todo:pattern : cityCode-day-month-year example : CAS-12-12-20 remove the last 2 digits of the year
+            //:pattern : cityCode-day-month-year example : CAS-12-12-20 remove the first 2 digits of the year
             String yearPattern = date.getYear()+"";
-            String year = yearPattern.substring(0,yearPattern.length()-2);
-            competition.setCode(code+"-"+date.getDayOfMonth()+"-"+date.getMonthValue()+"-"+yearPattern);
+            String year = yearPattern.substring(2,yearPattern.length());
+            competition.setCode(code+"-"+date.getDayOfMonth()+"-"+date.getMonthValue()+"-"+year);
             return this.competitionRepository.save(competition);
         }).toList();
     }

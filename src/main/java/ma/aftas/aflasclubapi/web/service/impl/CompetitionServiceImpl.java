@@ -59,9 +59,11 @@ public class CompetitionServiceImpl implements CompetitionService  {
         }
 
         Competition competition  = this.competitionMapper.toEntity(competitionRequestDto);
-        //Todo:  code pattern -> ims-22-12-23
-        String code = competition.getLocation() + competition.getDate();
-        competition.setCode(code);
+        //:pattern : cityCode-day-month-year example : CAS-12-12-20 remove the first 2 digits of the year
+        String yearPattern = competition.getDate().getYear()+"";
+        String year = yearPattern.substring(2,yearPattern.length());
+        String code = competition.getLocation().substring(0,3);
+        competition.setCode(code+"-"+competition.getDate().getDayOfMonth()+"-"+competition.getDate().getMonthValue()+"-"+year);
         competition.setNumberOfParticipants(0);
         logger.info("ajouter competition  code "+competition.getCode());
 
