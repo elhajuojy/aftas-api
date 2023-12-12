@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 @Component
@@ -67,43 +66,52 @@ public class ApplicationRunner implements CommandLineRunner {
 
         String nowDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         Collection<Competition> competitions = fakeCompetitions() ;
-        Collection<Member> members = Stream.of(faker.name(),faker.name(),faker.name()).map(
+
+        Collection<Member> members = Stream.of("ELMAHDI","OUSSAMA","ABDELMALK").map(
                 name -> {
-                    //TODO : SAVE THOSE TO DATABASE FOR TEST
+                    // : SAVE THOSE TO DATABASE FOR TEST
                     //MEMBER INFORMATION
                     Member member = new Member();
-                    member.setName(name.firstName());
+                    member.setName(name);
                     member.setId(UUID.randomUUID());
-                    member.setFamilyName(name.lastName());
+                    member.setFamilyName(faker.name().lastName());
                     member.setNationalityFlag(faker.country().flag());
                     member.setNationality(faker.country().name());
                     member.setNum(faker.number().randomDigit());
                     member.setIdentityDocumentType(
                         identityDocumentTypeMap.get(faker.number().numberBetween(1,3))
                     );
-                    member.setIdentityNumber(faker.idNumber().valid());
+                    member.setIdentityNumber("HH1222-"+name);
                     member.setVersion("1");
                     member.setAccessionDate(LocalDateTime.now());
-                    //TODO GETTING COMPETITION WHERE WE CAN REGISTER
+                    // GETTING COMPETITION WHERE WE CAN REGISTER
                     member.setCompetitions(competitions);
                     return this.memberRepository.save(member);
                 }
         ).toList();
+        Collection<Competition> competitions1 = this.memberRepository.findByIdentityNumber("HH1222-ELMAHDI").get().getCompetitions();
+        competitions1.forEach(competition -> {
+            System.out.println("Members : HH1222-ELMAHDI  IS ATTENDING "+ competition.getCode() + " COMPETITION");
+        });
 
 
     }
 
     private List<Competition> fakeCompetitions() {
-        return Stream.of(faker.university().name(),faker.university().name()).map((something)->{
+        return Stream.of("sms","ngs","lsg","hgs").map((code)->{
             Competition competition = new Competition();
+            LocalDate date = LocalDate.now().plusDays(5);
             competition.setAmount(50000.00);
             competition.setId(UUID.randomUUID());
-            competition.setDate(LocalDate.now().plusDays(5));
+            competition.setDate(date);
             competition.setStartTime(LocalTime.parse("08:00"));
             competition.setEndTime(LocalTime.parse("17:00"));
             competition.setNumberOfParticipants(competition.getNumberOfParticipants());
             competition.setLocation(moroccoCityCodes.get("NDR"));
-            competition.setCode(faker.code().gtin8());
+            //todo:pattern : cityCode-day-month-year example : CAS-12-12-20 remove the last 2 digits of the year
+            String yearPattern = date.getYear()+"";
+            String year = yearPattern.substring(0,yearPattern.length()-2);
+            competition.setCode(code+"-"+date.getDayOfMonth()+"-"+date.getMonthValue()+"-"+yearPattern);
             return this.competitionRepository.save(competition);
         }).toList();
     }

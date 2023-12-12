@@ -6,9 +6,13 @@ import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import ma.aftas.aflasclubapi.dto.*;
 import ma.aftas.aflasclubapi.entity.Competition;
-import ma.aftas.aflasclubapi.exception.business.BadRequestException;
+import ma.aftas.aflasclubapi.entity.Member;
+import ma.aftas.aflasclubapi.enums.StatusCompeition;
+import ma.aftas.aflasclubapi.exception.business.*;
 import ma.aftas.aflasclubapi.mappers.CompetitionMapper;
+import ma.aftas.aflasclubapi.mappers.MemberMapper;
 import ma.aftas.aflasclubapi.web.repository.CompetitionRepository;
+import ma.aftas.aflasclubapi.web.repository.MemberRepository;
 import ma.aftas.aflasclubapi.web.service.CompetitionService;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
@@ -16,32 +20,55 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Transactional
 @Log4j2
 public class CompetitionServiceImpl implements CompetitionService {
     private final CompetitionRepository competitionRepository;
+
+    private final MemberRepository memberRepository;
+
     private final CompetitionMapper competitionMapper;
     private Faker faker;
 
     Logger logger = org.slf4j.LoggerFactory.getLogger(CompetitionServiceImpl.class);
 
-    public CompetitionServiceImpl(CompetitionRepository competitionRepository) {
+    public CompetitionServiceImpl(CompetitionRepository competitionRepository,MemberRepository memberRepository) {
         this.competitionRepository = competitionRepository;
         this.competitionMapper = CompetitionMapper.INSTANCE;
+        this.memberRepository = memberRepository;
         this.faker = new Faker();
 
     }
 
     @Override
     public CompetitionDto ajouterCompetition(CompetitionRequestDto competitionRequestDto) {
-//        List<String> errors = new ArrayList<>();
+        ajouterCompetitionValidationDto(competitionRequestDto);
+
+        // : CHECK IF THERE'S ALREADY EVENT IN THE SAME DATE IF EXIT'S THROW ALREADY RESERVED EXCEPTION
+        if(this.competitionRepository.listerLesCompetitionParDate(competitionRequestDto.getDate()).isPresent()){
+            throw  new AlreadyExistsException("THERE'S ALREADY COMPETITION PLANNED IN THIS DATE THAT YOU HAVE PROVIDED ");
+        }
+
+        Competition competition  = this.competitionMapper.toEntity(competitionRequestDto);
+        //Todo:  code pattern -> ims-22-12-23
+        String code = competition.getLocation() + competition.getDate();
+        competition.setCode(code);
+        competition.setNumberOfParticipants(0);
+        logger.info("ajouter competition  code "+competition.getCode());
+
+
+
+        return this.competitionMapper.toDto(this.competitionRepository.save(competition));
+
+
+    }
+
+    private void ajouterCompetitionValidationDto(CompetitionRequestDto competitionRequestDto) {
         Map<String,String> errors = new HashMap<>();
         if (competitionRequestDto != null){
             if (competitionRequestDto.getDate() == null){
@@ -63,23 +90,63 @@ public class CompetitionServiceImpl implements CompetitionService {
                 throw new BadRequestException("Input validation exception's ",errors);
             }
         }
-
-        Competition competition = new Competition();
-        competition = this.competitionMapper.toEntity(competitionRequestDto);
-        competition.setCode(faker.code().isbn10());
-        competition.setNumberOfParticipants(0);
-        logger.info("ajouter competition  code "+competition.getCode());
-
-
-
-        return this.competitionMapper.toDto(this.competitionRepository.save(competition));
-
-
     }
 
+    // : inscription Member Dans une Competition (check si membre exists ou non  )
     @Override
-    public MemberCompetitionResponse inscriptionMemberDansCompetition(MemberDto memberDto) {
-        return null;
+    public MemberCompetitionResponse inscriptionMembreDansCompetition(MemberCompetitionRequest memberCompetitionRequest) {
+        inscriptionMembreDansCompetitionValidation(memberCompetitionRequest);
+        Optional<Member> member =  this.memberRepository.findByIdentityNumber(memberCompetitionRequest.getIdentityNumber());
+        if(member.isEmpty()){
+            throw  new UserNotFoundException("Member not found with this identity number");
+        }
+
+        //:: GET COMPETITION
+        Optional<Competition> competition = this.competitionRepository.listerLesCompetitionParCode(memberCompetitionRequest.getCodeCompetition());
+        if(competition.isEmpty()){
+            throw  new NotFoundException("Competition not found with this code");
+        }
+        // : the member and the competition are both exists now let's do our business logic
+        // : check if the member is already registered in this competition or not
+        if (competition.get().getMembers().contains(member.get())){
+            log.info("member is already registered in this competition");
+            throw  new AlreadyExistsException("You are already registered in this competition");
+        }
+
+
+        // : check if the competition start date is before today's date and 24h before the competition
+        // start date so the member can register to the platform
+        LocalDate competitionDate = competition.get().getDate();
+        LocalDate legalDateToRegisterInCompetition = LocalDate.now().minusDays(1);
+        log.info("competition date "+competitionDate +" legal date to register "+legalDateToRegisterInCompetition) ;
+        if (competitionDate.isBefore(legalDateToRegisterInCompetition)){
+            throw  new OutOfTimeExpection("You can't register to this competition because it's already started or it's less than 24h before the competition");
+        }
+
+        //: NOW YOU CAN REGISTER MEMBER TO THE COMPETITION WITH SUCCESS
+        competition.get().getMembers().add(member.get());
+
+        MemberCompetitionResponse memberCompetitionResponse = new MemberCompetitionResponse();
+        memberCompetitionResponse.setMemberDto(MemberMapper.INSTANCE.toDto(member.get()));
+        memberCompetitionResponse.setCompetitionDto(CompetitionMapper.INSTANCE.toDto(competition.get()));
+
+
+        return memberCompetitionResponse;
+    }
+
+    private void inscriptionMembreDansCompetitionValidation(MemberCompetitionRequest memberCompetitionRequest) {
+        Map<String,String> errors = new HashMap<>();
+        if (memberCompetitionRequest.getCodeCompetition().isBlank()|| memberCompetitionRequest.getCodeCompetition().isEmpty())
+        {
+            errors.put("codeCompetition","Please Provide code competition");
+
+        }
+        if (memberCompetitionRequest.getIdentityNumber().isEmpty()|| memberCompetitionRequest.getIdentityNumber().isBlank()){
+            errors.put("identityNumber","Please Provide your ");
+        }
+        if (!errors.isEmpty()){
+            throw new BadRequestException("Input validation exception's ",errors);
+        }
     }
 
     @Override
@@ -108,13 +175,28 @@ public class CompetitionServiceImpl implements CompetitionService {
 
             switch (status){
                 case "encour" -> {
-                    return this.competitionRepository.listerLesCompetitionEncour(today, pageRequest).map(CompetitionMapper.INSTANCE::toDto);
+                    return this.competitionRepository.listerLesCompetitionEncour(today, pageRequest).map(competition ->{
+                       CompetitionDto competitionDto =  CompetitionMapper.INSTANCE.toDto(competition);
+                       competitionDto.setStatus(StatusCompeition.ENCOURS);
+                       return competitionDto;
+                    });
                 }
                 case "avenir"->{
-                    return this.competitionRepository.listerLesCompetitionAvenir(today,pageRequest).map(CompetitionMapper.INSTANCE::toDto);
+                    return this.competitionRepository.listerLesCompetitionAvenir(today,pageRequest).map(
+                            competition -> {
+                                CompetitionDto competitionDto = CompetitionMapper.INSTANCE.toDto(competition);
+                                competitionDto.setStatus(StatusCompeition.AVENIR);
+                                return competitionDto;
+                            });
                 }
                 case "ferme"->{
-                   return this.competitionRepository.listerLesCompetitionFerme(today, pageRequest).map(CompetitionMapper.INSTANCE::toDto);
+                   return this.competitionRepository.listerLesCompetitionFerme(today, pageRequest).map(
+                           competition -> {
+                               CompetitionDto competitionDto = CompetitionMapper.INSTANCE.toDto(competition);
+                               competitionDto.setStatus(StatusCompeition.FERME);
+                               return competitionDto;
+
+                           });
                 }
                 default -> throw new  IllegalArgumentException(status);
 
@@ -123,7 +205,18 @@ public class CompetitionServiceImpl implements CompetitionService {
     }
 
     @Override
-    public Page<PodiumDto> affichePoduim(Map<String, String> queryParams) {
+    public Page<PodiumDto> affichePodium(Map<String, String> queryParams) {
+        //TODO: AFFICHE PODUIM
         return null;
     }
+
+    @Override
+    public PodiumCompetitionDto affichePodiumCompetition(String code, Map<String, String> queryParams) {
+        PodiumCompetitionDto podiumCompetitionDto = new PodiumCompetitionDto();
+        podiumCompetitionDto.setCode(code);
+        //TODO : FIND ALL RELATED MEMBER'S TO THIS COMPLETION AND THEIR  RANKING ALSO
+        return podiumCompetitionDto;
+    }
+
+
 }
