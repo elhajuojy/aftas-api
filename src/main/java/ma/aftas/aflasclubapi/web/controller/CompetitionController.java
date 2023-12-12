@@ -55,17 +55,7 @@ public class CompetitionController {
     }
 
     //: Afficher le podium competitions/[x]
-    @GetMapping("/{code}/podium")
-    public ResponseEntity<PodiumCompetitionDto> affichePodiumCompetition(@PathVariable("code") String code ,
-                                                                        @RequestParam Map<String,String> queryParams){
 
-        return ResponseEntity.ok(this.competitionService.affichePodiumCompetition(code ,queryParams));
-    }
-
-
-
-
-    //TODO : Insérer le résultat de la compétition du jour (member' id , fish id , )
 
 
 }

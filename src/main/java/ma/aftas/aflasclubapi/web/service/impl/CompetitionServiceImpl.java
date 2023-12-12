@@ -14,6 +14,7 @@ import ma.aftas.aflasclubapi.mappers.MemberMapper;
 import ma.aftas.aflasclubapi.web.repository.CompetitionRepository;
 import ma.aftas.aflasclubapi.web.repository.MemberRepository;
 import ma.aftas.aflasclubapi.web.service.CompetitionService;
+import ma.aftas.aflasclubapi.web.service.PodiumService;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,7 +28,7 @@ import java.util.*;
 @Service
 @Transactional
 @Log4j2
-public class CompetitionServiceImpl implements CompetitionService {
+public class CompetitionServiceImpl implements CompetitionService  {
     private final CompetitionRepository competitionRepository;
 
     private final MemberRepository memberRepository;
@@ -204,19 +205,6 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     }
 
-    @Override
-    public Page<PodiumDto> affichePodium(Map<String, String> queryParams) {
-        //TODO: AFFICHE PODUIM
-        return null;
-    }
-
-    @Override
-    public PodiumCompetitionDto affichePodiumCompetition(String code, Map<String, String> queryParams) {
-        PodiumCompetitionDto podiumCompetitionDto = new PodiumCompetitionDto();
-        podiumCompetitionDto.setCode(code);
-        //TODO : FIND ALL RELATED MEMBER'S TO THIS COMPLETION AND THEIR  RANKING ALSO
-        return podiumCompetitionDto;
-    }
 
 
 }

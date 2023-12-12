@@ -5,7 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
 
 @AllArgsConstructor
@@ -14,6 +16,9 @@ import java.util.Collection;
 public class PodiumCompetitionDto {
     private String code ;
     private String status ;
-    private LocalDateTime date ;
+    private LocalDate date ;
+    private LocalTime startTime ;
+    private LocalTime endTime ;
+    private String location ;
     private Page<PodiumDto> podium ;
 }

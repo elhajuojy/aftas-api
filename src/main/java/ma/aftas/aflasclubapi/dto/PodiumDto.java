@@ -17,12 +17,6 @@ public class PodiumDto {
     private String familyName;
     private String nationality;
     private String nationalityFlag;
-
-
-
-
-
-
-
+    private String competitionCode;
 
 }
