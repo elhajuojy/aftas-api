@@ -2,6 +2,7 @@ package ma.aftas.aflasclubapi.web.service.impl;
 
 import com.github.javafaker.Faker;
 import jakarta.transaction.Transactional;
+import lombok.extern.log4j.Log4j2;
 import ma.aftas.aflasclubapi.dto.MemberDto;
 import ma.aftas.aflasclubapi.dto.MemberResponseDto;
 import ma.aftas.aflasclubapi.entity.Member;
@@ -11,6 +12,9 @@ import ma.aftas.aflasclubapi.exception.business.UserNotFoundException;
 import ma.aftas.aflasclubapi.mappers.MemberMapper;
 import ma.aftas.aflasclubapi.web.repository.MemberRepository;
 import ma.aftas.aflasclubapi.web.service.MemberService;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,9 +24,11 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@Log4j2
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository ;
     private MemberMapper memberMapper;
+    Logger logger = org.slf4j.LoggerFactory.getLogger(MemberServiceImpl.class);
 
     public MemberServiceImpl(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
@@ -88,5 +94,36 @@ public class MemberServiceImpl implements MemberService {
                 ()->new UserNotFoundException("The member with num "+num+" was not found")
         );
         return null;
+    }
+
+    //:  recherche d’un adhérent par numéro, nom, ou prénom .
+    @Override
+    public MemberDto findMemberByMoreThanParam(Map<String, String> queryParams) {
+        Member member  = new Member();
+        //: CHECK IF THE QUERY PARAMS IS EMPTY OR NOT HAVING THE REQUIRED PARAMS SUCH AS NAME , FAMILYNAME , NUM
+        if (queryParams.isEmpty() && !queryParams.containsKey("name") && !queryParams.containsKey("familyName") && !queryParams.containsKey("num")){
+            throw  new IllegalArgumentException("Please provide your' param such as name , familyName , num ");
+        }
+
+        if (queryParams.containsKey("name")){
+
+          member =this.memberRepository.findByName(queryParams.get("name")).orElseThrow(
+                 ()->new UserNotFoundException("The member with name "+queryParams.get("name")+" was not found")
+          );
+
+        }
+        if (queryParams.containsKey("familyName")){
+             member = this.memberRepository.findByFamilyName(queryParams.get("familyName")).orElseThrow(
+                    ()->new UserNotFoundException("The member with familyName "+queryParams.get("familyName")+" was not found")
+            );
+        }
+        if (queryParams.containsKey("num")){
+             member = this.memberRepository.findByIdentityNumber(queryParams.get("num")).orElseThrow(
+                    ()->new UserNotFoundException("The member with num "+queryParams.get("num")+" was not found")
+            );
+        }
+
+
+        return MemberMapper.INSTANCE.toDto(member);
     }
 }
