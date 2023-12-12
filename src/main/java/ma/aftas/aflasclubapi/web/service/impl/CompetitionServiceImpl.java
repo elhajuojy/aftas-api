@@ -11,6 +11,7 @@ import ma.aftas.aflasclubapi.enums.StatusCompeition;
 import ma.aftas.aflasclubapi.exception.business.*;
 import ma.aftas.aflasclubapi.mappers.CompetitionMapper;
 import ma.aftas.aflasclubapi.mappers.MemberMapper;
+import ma.aftas.aflasclubapi.util.AftasUtil;
 import ma.aftas.aflasclubapi.web.repository.CompetitionRepository;
 import ma.aftas.aflasclubapi.web.repository.MemberRepository;
 import ma.aftas.aflasclubapi.web.service.CompetitionService;
@@ -24,6 +25,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+
+import static ma.aftas.aflasclubapi.util.AftasUtil.getPagePathQueryChecker;
 
 @Service
 @Transactional
@@ -152,17 +155,10 @@ public class CompetitionServiceImpl implements CompetitionService  {
 
     @Override
     public Page<CompetitionDto> ListerLesCompetition(Map<String, String> queryParams) {
+        AftasUtil.PagePathQueryChecker pagePathQueryChecker = getPagePathQueryChecker(queryParams);
         PageRequest pageRequest ;
-        int page;
-        int size;
-        if(queryParams.containsKey("page") && queryParams.containsKey("size")){
-            page = Integer.parseInt(queryParams.get("page"));
-            size = Integer.parseInt(queryParams.get("size"));
-        }else{
-            page = 0;
-            size = 10;
-        }
-        pageRequest = PageRequest.of(page , size);
+
+        pageRequest = PageRequest.of(pagePathQueryChecker.page(), pagePathQueryChecker.size());
 
         if (queryParams.containsKey("status")) {
             return getLesCompetitionParStatus(queryParams.get("status"), pageRequest);

@@ -12,14 +12,14 @@ public class AftasUtil {
 
     public static PagePathQueryChecker getPagePathQueryChecker(Map<String, String> queryParams) {
         PageRequest pageRequest ;
-        int page;
-        int size;
-        if(queryParams.containsKey("page") && queryParams.containsKey("size")){
+        int page = 0;
+        int size = 10;
+        if(queryParams.containsKey("page")){
             page = Integer.parseInt(queryParams.get("page"));
+        }
+        if(queryParams.containsKey("size")){
+
             size = Integer.parseInt(queryParams.get("size"));
-        }else{
-            page = 0;
-            size = 10;
         }
         PagePathQueryChecker pagePathQueryChecker = new PagePathQueryChecker(page, size);
         return pagePathQueryChecker;
