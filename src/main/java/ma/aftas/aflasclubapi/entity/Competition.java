@@ -15,7 +15,9 @@ import java.util.Date;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 public class Competition extends BaseEntity{
     private String code ;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -28,7 +30,7 @@ public class Competition extends BaseEntity{
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "ranking",
     joinColumns = @JoinColumn(name = "competition_id"),
-            inverseJoinColumns = @JoinColumn(name = "member_id")
+            inverseJoinColumns = @JoinColumn(name = "member_num")
     )
     private Collection<Member> members = new ArrayList<>();
     @OneToMany(mappedBy = "competition")

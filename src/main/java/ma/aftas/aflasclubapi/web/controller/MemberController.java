@@ -37,7 +37,7 @@ public class MemberController {
     }
 
     @GetMapping("/search")
-    //TODO :  recherche d’un adhérent par numéro, nom, ou prénom .
+    // :  recherche d’un adhérent par numéro, nom, ou prénom .
     public ResponseEntity<MemberDto> findUserByDifferenceParams(@RequestParam Map<String,String> queryParams,
                                                                  @RequestHeader("Authorization") String token
                                                                  ){

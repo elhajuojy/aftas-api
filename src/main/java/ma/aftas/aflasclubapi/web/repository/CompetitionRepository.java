@@ -29,4 +29,7 @@ public interface CompetitionRepository extends JpaRepository<Competition, UUID> 
 
     @Query("SELECT U FROM Competition U WHERE  U.code = :code")
     Optional<Competition> listerLesCompetitionParCode(@Param("code") String code);
+
+    Optional<Competition> findByCode( String code);
+
 }

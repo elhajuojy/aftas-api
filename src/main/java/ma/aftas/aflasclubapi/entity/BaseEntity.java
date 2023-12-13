@@ -13,19 +13,19 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @MappedSuperclass
 @Getter
 @Setter
+@ToString
 public abstract class BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
-    protected UUID id;
+    protected Integer id;
     private String version;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

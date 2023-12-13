@@ -4,9 +4,12 @@ import com.github.javafaker.Faker;
 import lombok.extern.log4j.Log4j2;
 import ma.aftas.aflasclubapi.entity.Competition;
 import ma.aftas.aflasclubapi.entity.Fish;
+import ma.aftas.aflasclubapi.entity.Level;
 import ma.aftas.aflasclubapi.entity.Member;
 import ma.aftas.aflasclubapi.enums.IdentityDocumentType;
 import ma.aftas.aflasclubapi.web.repository.CompetitionRepository;
+import ma.aftas.aflasclubapi.web.repository.FishRepository;
+import ma.aftas.aflasclubapi.web.repository.LevelRepository;
 import ma.aftas.aflasclubapi.web.repository.MemberRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -25,6 +28,8 @@ public class ApplicationRunner implements CommandLineRunner {
 
     private MemberRepository memberRepository ;
     private CompetitionRepository competitionRepository ;
+    private LevelRepository levelRepository;
+    private FishRepository fishRepository;
     Faker faker ;
     Map<String, String> moroccoCityCodes = new HashMap<>();
 
@@ -33,11 +38,15 @@ public class ApplicationRunner implements CommandLineRunner {
 
     public ApplicationRunner(
             MemberRepository memberRepository,
-            CompetitionRepository competitionRepository
+            CompetitionRepository competitionRepository,
+            LevelRepository levelRepository,
+            FishRepository fishRepository
     ) {
         this.memberRepository = memberRepository;
         this.competitionRepository = competitionRepository;
         this.faker = new Faker();
+        this.levelRepository = levelRepository;
+        this.fishRepository = fishRepository;
     }
 
     @Override
@@ -73,7 +82,7 @@ public class ApplicationRunner implements CommandLineRunner {
                     //MEMBER INFORMATION
                     Member member = new Member();
                     member.setName(name);
-                    member.setId(UUID.randomUUID());
+                    member.setNum(faker.number().randomDigit());
                     member.setFamilyName(faker.name().lastName());
                     member.setNationalityFlag(faker.country().flag());
                     member.setNationality(faker.country().name());
@@ -82,7 +91,6 @@ public class ApplicationRunner implements CommandLineRunner {
                         identityDocumentTypeMap.get(faker.number().numberBetween(1,3))
                     );
                     member.setIdentityNumber("HH1222-"+name);
-                    member.setVersion("1");
                     member.setAccessionDate(LocalDateTime.now());
                     // GETTING COMPETITION WHERE WE CAN REGISTER
                     member.setCompetitions(competitions);
@@ -94,6 +102,8 @@ public class ApplicationRunner implements CommandLineRunner {
             System.out.println("Members : HH1222-ELMAHDI  IS ATTENDING "+ competition.getCode() + " COMPETITION");
         });
 
+        fakeFishesStore();
+
 
     }
 
@@ -102,7 +112,6 @@ public class ApplicationRunner implements CommandLineRunner {
             Competition competition = new Competition();
             LocalDate date = LocalDate.now().plusDays(5);
             competition.setAmount(50000.00);
-            competition.setId(UUID.randomUUID());
             competition.setDate(date);
             competition.setStartTime(LocalTime.parse("08:00"));
             competition.setEndTime(LocalTime.parse("17:00"));
@@ -118,6 +127,21 @@ public class ApplicationRunner implements CommandLineRunner {
 
 
     private List<Fish> fakeFishesStore(){
+        Stream.of("Blue","Sushi","Goldie","Oscar").map((fishName)->{
+            Level level  =new Level();
+            level.setPoints(faker.number().randomDigit());
+            level.setDescription(faker.lorem().sentence());
+            this.levelRepository.save(level);
+            Fish fish = new Fish();
+            fish.setName(fishName);
+            fish.setAverageWeight(faker.number().randomDouble(2,1,10));
+            this.fishRepository.save(fish);
+            fish.setLevel(level);
+            this.fishRepository.save(fish);
+            return fish;
+        }).toList();
         return null;
     }
+
+
 }
