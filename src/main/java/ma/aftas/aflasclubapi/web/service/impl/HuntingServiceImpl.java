@@ -1,5 +1,6 @@
 package ma.aftas.aflasclubapi.web.service.impl;
 
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 import lombok.extern.log4j.Log4j2;
@@ -30,12 +31,17 @@ public class HuntingServiceImpl implements HuntingService {
     private final RankingRepository rankingRepository;
     private final HuntingRepository huntingRepository;
     private Logger log = Logger.getLogger(HuntingServiceImpl.class.getName());
-    public HuntingServiceImpl(CompetitionRepository competitionRepository, FishRepository fishRepository, MemberRepository memberRepository, RankingRepository rankingRepository, HuntingRepository huntingRepository) {
+    private EntityManager em ;
+    public HuntingServiceImpl(CompetitionRepository competitionRepository, FishRepository fishRepository,
+                              MemberRepository memberRepository,
+                              RankingRepository rankingRepository, HuntingRepository huntingRepository,
+                              EntityManager em) {
         this.competitionRepository = competitionRepository;
         this.fishRepository = fishRepository;
         this.memberRepository = memberRepository;
         this.rankingRepository= rankingRepository;
         this.huntingRepository = huntingRepository;
+        this.em = em;
     }
 
     @Override
@@ -45,7 +51,6 @@ public class HuntingServiceImpl implements HuntingService {
         if (codeCompetition.isBlank() || codeCompetition.isEmpty()){
             throw  new BadRequestException("Please Provide Code competition ");
         }
-
 
         // : IF THE FISH ALREADY EXISTS  CHECK THE MEMBER ALSO OR THROW EXCEPTION
         Member member = this.memberRepository.findByIdentityNumber(
@@ -61,28 +66,23 @@ public class HuntingServiceImpl implements HuntingService {
 
 
         // :FIND RANKING BY COMPETITION AND MEMBER
-        Ranking ranking= this.rankingRepository.findRankingsByCompetitionIdAndMemberId(competition.getCode(), member.getNum()).orElseThrow(()->
-            new NotFoundException("The Member with identityNumber "+huntingRequestDto.getIdentityNumber() +" and competition "+codeCompetition +" they didn't exists ")
-        );
+
+        Ranking ranking= findRankingByMemberAndCompetition( competition , member) ;
 
         // : IF THE COMPETITION ALREADY EXISTS  CHECK THE FISH ALSO OR THROW EXCEPTION
         Fish fish = this.fishRepository.findById(huntingRequestDto.getFishId()).orElseThrow(
-                ()-> new NotFoundException("this Fish with id "+huntingRequestDto.getFishId()+"doesn't exists ")
+                ()-> new NotFoundException("this Fish with id "+huntingRequestDto.getFishId()+" doesn't exists ")
         );
 
 
         AtomicBoolean exists = new AtomicBoolean(false);
-        AtomicInteger score = new AtomicInteger(0);
-
-        ranking.getMember().getHuntings().forEach(
-
-                 (hunting)->{
+        ranking.getMember().getHuntings().forEach((hunting)->{
                      if (hunting.getFish().getId().equals(huntingRequestDto.getFishId())){
                          hunting.setNumberOfFish(hunting.getNumberOfFish()+1);
-                         score.set(score.get()+hunting.getNumberOfFish()*hunting.getFish().getLevel().getPoints());
                          exists.set(true);
+                         this.huntingRepository.save(hunting);
                      }
-                 });
+        });
 
         if (!exists.get()){
             Hunting newHunting = new Hunting();
@@ -91,31 +91,47 @@ public class HuntingServiceImpl implements HuntingService {
             newHunting.setMember(member);
             newHunting.setCompetition(competition);
             this.huntingRepository.save(newHunting);
-
         }
 
-        //: LAST COLLECT OF COUNT THE SCORE BASED ON HUNT.NUMBER * FISH.LEVEL + *** = SCORE
+        ranking = findRankingByMemberAndCompetition(competition , member);
+        log.info("GET RANKING : "+ranking.getScore());
 
-
-        ranking.setScore(score.get());
-        log.info("SCORE : "+score.get());
-        this.rankingRepository.findRankingsByCompetitionId(codeCompetition,null).forEach((rank -> {
-            //TODO : RANKING
-        }));
-
+        em.refresh(ranking);
 
         HuntingResponseDto huntingResponseDto = new HuntingResponseDto();
-
-
         huntingResponseDto.setMessage("your hunt is done  Successfully Bravo !");
         huntingResponseDto.setPodiumDto(PodiumMapper.INSTANCE.toDto(ranking));
-
-        this.rankingRepository.save(ranking);
-        log.info("HuntingResponseDto : "+huntingResponseDto.toString());
-
-
-
-
+        log.info("HuntingResponseDto : "+huntingResponseDto.getMessage());
+        updateRankingScore(codeCompetition);
+        updateRankingRank(codeCompetition);
         return huntingResponseDto;
     }
+
+    private Ranking findRankingByMemberAndCompetition(Competition competition ,Member member) {
+        return this.rankingRepository.findRankingsByCompetitionIdAndMemberId(competition.getCode(), member.getNum()).orElseThrow(()->
+                new NotFoundException("The Member with identityNumber "+member.getIdentityNumber() +" and competition "+competition.getCode() +" they didn't exists ")
+        );
+    }
+
+    //TODO : sum ranking based on the competition and
+    public boolean updateRankingScore(String codeCompetition ){
+        //TODO : FIND RANKING BY COMPETITION AND MEMBER THAN LOOP INTO ALL MEMBER'S HUNTING AND SUM THE SCORE AND UPDATE THE RANKING
+        Competition  competition= this.competitionRepository.listerLesCompetitionParCode(codeCompetition).orElseThrow(()-> new NotFoundException("this competition doesn't exit's "));
+        competition.getMembers().forEach((member)->{
+            AtomicInteger score = new AtomicInteger(0);
+            member.getHuntings().forEach((hunting)->{
+                score.set(score.get()+hunting.getNumberOfFish()*hunting.getFish().getLevel().getPoints());
+            });
+            Ranking ranking = this.rankingRepository.findRankingsByCompetitionIdAndMemberId(competition.getCode(), member.getNum()).orElseThrow(()->
+                    new NotFoundException("The Member with identityNumber "+member.getIdentityNumber() +" and competition "+codeCompetition +" they didn't exists ")
+            );
+            ranking.setScore(score.get());
+            this.rankingRepository.save(ranking);
+        });
+        return true;
+    }
+    public boolean updateRankingRank(String codeCompetition){
+
+        return true;
+    };
 }

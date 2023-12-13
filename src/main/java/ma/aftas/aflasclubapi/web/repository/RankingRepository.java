@@ -15,13 +15,18 @@ import java.util.UUID;
 public interface RankingRepository extends JpaRepository<Ranking, UUID> {
 
     // : OPTIONAL FIND ALL RANKING BY COMPETITION CODE
-    @Query("SELECT U FROM Ranking U WHERE U.competition.code =:code")
+    @Query("SELECT U FROM Ranking U WHERE U.competition.code =:code ")
     Page<Ranking> findRankingsByCompetitionId(@Param("code")String code, Pageable pageable);
 
     Optional<Ranking> findByCompetitionAndMember(Member member , Competition competition);
 
-    @Query("SELECT U FROM Ranking U WHERE U.competition.code =:code AND U.member.id =:memberId")
+    @Query("SELECT U FROM Ranking U WHERE U.competition.code =:code AND U.member.num =:memberId")
     Optional<Ranking> findRankingsByCompetitionIdAndMemberId(@Param("code")String code,@Param("memberId") Integer memberId);
+
+    @Query("SELECT U.score FROM Ranking U WHERE U.competition.code =:code AND U.member.num =:memberId")
+    Integer getScoreCompetitionByMemberIdAndCompetitionCode(Integer memberId, String code);
+
+    //TODO: UPDATE RANKING
 
 
 }

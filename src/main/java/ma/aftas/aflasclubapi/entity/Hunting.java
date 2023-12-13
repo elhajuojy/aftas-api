@@ -12,7 +12,6 @@ import lombok.*;
 @Setter
 @ToString
 public class Hunting extends BaseEntity {
-    private Integer idHunting ;
     private Integer numberOfFish;
     @ManyToOne
     private Fish fish;
