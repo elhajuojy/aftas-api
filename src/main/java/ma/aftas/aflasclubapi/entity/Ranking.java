@@ -12,7 +12,9 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
 @Table(name = "RANKING")
 public class Ranking  {
@@ -21,7 +23,6 @@ public class Ranking  {
     private RankingId id ;
     private Integer rank ;
     private Integer score ;
-
     @ManyToOne
     @MapsId("memberId")
     private Member member;

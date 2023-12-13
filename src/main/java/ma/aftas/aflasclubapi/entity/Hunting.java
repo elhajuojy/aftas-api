@@ -8,7 +8,9 @@ import lombok.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 public class Hunting extends BaseEntity {
     private Integer idHunting ;
     private Integer numberOfFish;

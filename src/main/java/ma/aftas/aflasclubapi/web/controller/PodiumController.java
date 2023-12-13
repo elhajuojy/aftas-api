@@ -26,8 +26,4 @@ public class PodiumController {
         return ResponseEntity.ok(this.podiumService.affichePodiumCompetition(code ,queryParams));
     }
 
-
-
-
-    //TODO : Insérer le résultat de la compétition du jour (member' id , fish id , )
 }

@@ -25,16 +25,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             OutOfTimeExpection.class
     })
     public ResponseEntity<Object> globalExceptionHandler(Exception ex) {
-        ErrorResponse errorRes = new ErrorResponse("400", HttpStatus.BAD_REQUEST, "");
-        errorRes.setMessage(ex.getMessage());
+        ErrorResponse errorRes = new ErrorResponse("400", HttpStatus.BAD_REQUEST, ex.getMessage());
         return ResponseEntity.badRequest().body(errorRes);
     }
 
 
     @ExceptionHandler({NullPointerException.class})
     public ResponseEntity<ErrorResponse> globalExceptionHandler(NullPointerException ex) {
-        ErrorResponse errorRes = new ErrorResponse("400", HttpStatus.BAD_REQUEST, "");
-        errorRes.setMessage(ex.getMessage());
+        ErrorResponse errorRes = new ErrorResponse("400", HttpStatus.BAD_REQUEST, ex.getMessage());
         return ResponseEntity.badRequest().body(errorRes);
     }
 
@@ -50,7 +48,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         errorResponse.setCode("400");
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.toString());
         return ResponseEntity.badRequest().body(errorResponse);
-
     }
 
 
@@ -59,36 +56,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             IllegalArgumentException.class
     })
     public ResponseEntity<Object> illegalArgumentException(IllegalArgumentException ex) {
-
-        ErrorResponse errorRes = new ErrorResponse("400", HttpStatus.BAD_REQUEST, "Bad Request ");
-        errorRes.setMessage(ex.getMessage());
-
+        ErrorResponse errorRes = new ErrorResponse("400", HttpStatus.BAD_REQUEST, ex.getMessage());
         return ResponseEntity.badRequest().body(errorRes);
     }
 
     @ExceptionHandler({DateTimeParseException.class})
     public ResponseEntity<Object> dateTimeParseException(ObjectNotFoundException ex) {
-
-        ErrorResponse errorRes = new ErrorResponse("404", HttpStatus.NOT_FOUND, "Not Found ");
-        errorRes.setMessage(ex.getMessage());
-
+        ErrorResponse errorRes = new ErrorResponse("404", HttpStatus.NOT_FOUND, ex.getMessage());
         return ResponseEntity.badRequest().body(errorRes);
     }
 
     @ExceptionHandler({ObjectNotFoundException.class})
     public ResponseEntity<Object> objectNotFoundException(ObjectNotFoundException ex) {
-
-        ErrorResponse errorRes = new ErrorResponse("404", HttpStatus.NOT_FOUND, "Not Found ");
-        errorRes.setMessage(ex.getMessage());
-
+        ErrorResponse errorRes = new ErrorResponse("404", HttpStatus.NOT_FOUND, ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorRes);
     }
 
 
     private ResponseEntity<Object> buildResponseEntity(ErrorResponse errorRes) {
         HttpStatus status = HttpStatus.valueOf(errorRes.getStatus());
-        System.out.println("status = " + status);
-
         return new ResponseEntity<>(errorRes, status);
     }
 }

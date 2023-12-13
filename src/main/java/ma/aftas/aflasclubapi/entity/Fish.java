@@ -1,22 +1,23 @@
 package ma.aftas.aflasclubapi.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class Fish extends BaseEntity {
+@Getter
+@Setter
+@ToString
+public class Fish  {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id ;
     private String Name;
     private Double averageWeight;
     @ManyToOne(cascade = CascadeType.ALL)

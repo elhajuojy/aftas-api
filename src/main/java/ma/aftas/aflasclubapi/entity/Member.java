@@ -13,16 +13,18 @@ import java.util.Collection;
 import java.util.Date;
 
 
-@EqualsAndHashCode(callSuper = true)
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class Member extends BaseEntity{
+@Getter
+@Setter
+@ToString
+public class Member {
 
-//    @NotNull(message = "Num unique number must not be empty or repeated ")
-//    @Column(unique = true)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @NotNull(message = "Num unique number must not be empty or repeated ")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer num;
     private String name;
     private String familyName;
@@ -36,7 +38,7 @@ public class Member extends BaseEntity{
     private String identityNumber;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "Ranking",
-            joinColumns = @JoinColumn(name = "member_id"),
+            joinColumns = @JoinColumn(name = "member_num"),
             inverseJoinColumns = @JoinColumn(name = "competition_id")
     )
 

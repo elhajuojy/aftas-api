@@ -22,6 +22,7 @@ public interface PodiumMapper {
             @Mapping(source = "competition.code",target = "competitionCode")
     })
 
+
     PodiumDto toDto(Ranking Ranking);
 
 
