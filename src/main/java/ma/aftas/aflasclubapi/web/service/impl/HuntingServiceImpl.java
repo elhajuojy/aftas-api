@@ -94,6 +94,7 @@ public class HuntingServiceImpl implements HuntingService {
         }
 
         ranking = findRankingByMemberAndCompetition(competition , member);
+        //TODO BUG: FIX RANKING RETURN OLD VALUE SCORE - 1 NEW HUNTING SCORES
         log.info("GET RANKING : "+ranking.getScore());
 
         em.refresh(ranking);
@@ -113,9 +114,9 @@ public class HuntingServiceImpl implements HuntingService {
         );
     }
 
-    //TODO : sum ranking based on the competition and
+    // : sum ranking based on the competition and
     public boolean updateRankingScore(String codeCompetition ){
-        //TODO : FIND RANKING BY COMPETITION AND MEMBER THAN LOOP INTO ALL MEMBER'S HUNTING AND SUM THE SCORE AND UPDATE THE RANKING
+        // : FIND RANKING BY COMPETITION AND MEMBER THAN LOOP INTO ALL MEMBER'S HUNTING AND SUM THE SCORE AND UPDATE THE RANKING
         Competition  competition= this.competitionRepository.listerLesCompetitionParCode(codeCompetition).orElseThrow(()-> new NotFoundException("this competition doesn't exit's "));
         competition.getMembers().forEach((member)->{
             AtomicInteger score = new AtomicInteger(0);
