@@ -17,6 +17,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/members")
 @Log4j2
+@CrossOrigin("*")
 public class MemberController {
 
     //: Inscription d’un membre dans une compétition

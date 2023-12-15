@@ -26,7 +26,7 @@ public interface RankingRepository extends JpaRepository<Ranking, UUID> {
     @Query("SELECT U.score FROM Ranking U WHERE U.competition.code =:code AND U.member.num =:memberId")
     Integer getScoreCompetitionByMemberIdAndCompetitionCode(Integer memberId, String code);
 
-    //TODO: UPDATE RANKING ON TABLE RANKING WITH TRIGGER OR SOMETHING
+
 
 
 }

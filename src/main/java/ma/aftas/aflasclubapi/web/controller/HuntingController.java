@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/competitions/{code}/hunting")
+@CrossOrigin("*")
 public class HuntingController {
 
     private final HuntingService huntingService;

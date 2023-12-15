@@ -17,6 +17,8 @@ import org.apache.juli.logging.Log;
 import org.springframework.stereotype.Service;
 
 
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
@@ -79,6 +81,7 @@ public class HuntingServiceImpl implements HuntingService {
         ranking.getMember().getHuntings().forEach((hunting)->{
                      if (hunting.getFish().getId().equals(huntingRequestDto.getFishId())){
                          hunting.setNumberOfFish(hunting.getNumberOfFish()+1);
+                         log.info("hunting : "+hunting.getFish().getName()+" "+hunting.getNumberOfFish()+" "+hunting.getMember().getName()+" "+hunting.getCompetition().getCode());
                          exists.set(true);
                          this.huntingRepository.save(hunting);
                      }
@@ -90,23 +93,27 @@ public class HuntingServiceImpl implements HuntingService {
             newHunting.setFish(fish);
             newHunting.setMember(member);
             newHunting.setCompetition(competition);
+            log.info("newHunting : "+newHunting.getFish().getName()+" "+newHunting.getNumberOfFish()+" "+newHunting.getMember().getName()+" "+newHunting.getCompetition().getCode());
             this.huntingRepository.save(newHunting);
         }
 
-        ranking = findRankingByMemberAndCompetition(competition , member);
+//        Ranking ranking = findRankingByMemberAndCompetition(competition , member);
         //TODO BUG: FIX RANKING RETURN OLD VALUE SCORE - 1 NEW HUNTING SCORES
         log.info("GET RANKING : "+ranking.getScore());
 
-        em.refresh(ranking);
+        updateRankingScore(codeCompetition);
+
+        ranking = findRankingByMemberAndCompetition(competition , member);
 
         HuntingResponseDto huntingResponseDto = new HuntingResponseDto();
+        log.info("HuntingResponseDto : "+huntingResponseDto.getMessage());
         huntingResponseDto.setMessage("your hunt is done  Successfully Bravo !");
         huntingResponseDto.setPodiumDto(PodiumMapper.INSTANCE.toDto(ranking));
-        log.info("HuntingResponseDto : "+huntingResponseDto.getMessage());
-        updateRankingScore(codeCompetition);
-        updateRankingRank(codeCompetition);
+
         return huntingResponseDto;
     }
+
+
 
     private Ranking findRankingByMemberAndCompetition(Competition competition ,Member member) {
         return this.rankingRepository.findRankingsByCompetitionIdAndMemberId(competition.getCode(), member.getNum()).orElseThrow(()->
@@ -131,8 +138,5 @@ public class HuntingServiceImpl implements HuntingService {
         });
         return true;
     }
-    public boolean updateRankingRank(String codeCompetition){
 
-        return true;
-    };
 }

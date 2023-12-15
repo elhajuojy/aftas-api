@@ -10,6 +10,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/competitions/{code}/podiums")
+@CrossOrigin("*")
 public class PodiumController {
 
     private PodiumService podiumService;

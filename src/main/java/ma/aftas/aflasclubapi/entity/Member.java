@@ -22,7 +22,7 @@ import java.util.Date;
 @ToString
 public class Member {
 
-    @NotNull(message = "Num unique number must not be empty or repeated ")
+//    @NotNull(message = "Num unique number must not be empty or repeated ")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer num;
