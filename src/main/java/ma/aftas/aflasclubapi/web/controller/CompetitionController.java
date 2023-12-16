@@ -34,6 +34,11 @@ public class CompetitionController {
     }
 
 
+    @GetMapping("/{code}")
+    public ResponseEntity<CompetitionDto> getCompetitionByCode(@PathVariable("code") String code){
+        return ResponseEntity.ok(this.competitionService.getCompetitionByCode(code));
+    }
+
     @PostMapping("/{code}/members")
     public ResponseEntity<MemberCompetitionResponse> ajouterMembreDansCompetition(
             @PathVariable("code") String code ,

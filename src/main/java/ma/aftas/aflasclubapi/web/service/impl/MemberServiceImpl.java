@@ -10,17 +10,22 @@ import ma.aftas.aflasclubapi.exception.business.AlreadyExistsException;
 import ma.aftas.aflasclubapi.exception.business.BadRequestException;
 import ma.aftas.aflasclubapi.exception.business.UserNotFoundException;
 import ma.aftas.aflasclubapi.mappers.MemberMapper;
+import ma.aftas.aflasclubapi.util.AftasUtil;
 import ma.aftas.aflasclubapi.web.repository.MemberRepository;
 import ma.aftas.aflasclubapi.web.service.MemberService;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.slf4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import static ma.aftas.aflasclubapi.util.AftasUtil.getPagePathQueryChecker;
 
 @Service
 @Transactional
@@ -104,6 +109,9 @@ public class MemberServiceImpl implements MemberService {
         if (queryParams.isEmpty() && !queryParams.containsKey("name") && !queryParams.containsKey("familyName") && !queryParams.containsKey("num")){
             throw  new IllegalArgumentException("Please provide your' param such as name , familyName , num ");
         }
+        //TODO:page and size
+
+
 
         if (queryParams.containsKey("name")){
 
@@ -125,5 +133,13 @@ public class MemberServiceImpl implements MemberService {
 
 
         return MemberMapper.INSTANCE.toDto(member);
+    }
+
+    @Override
+    public Page<MemberDto> listerLesMembres(Map<String, String> queryParams) {
+        AftasUtil.PagePathQueryChecker pagePathQueryChecker = getPagePathQueryChecker(queryParams);
+        PageRequest pageRequest ;
+        pageRequest = PageRequest.of(pagePathQueryChecker.page(), pagePathQueryChecker.size());
+        return this.memberRepository.findAll(pageRequest).map(MemberMapper.INSTANCE::toDto);
     }
 }

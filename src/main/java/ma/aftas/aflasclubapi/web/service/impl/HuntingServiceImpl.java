@@ -1,24 +1,19 @@
 package ma.aftas.aflasclubapi.web.service.impl;
 
-import jakarta.persistence.EntityManager;
+
 import jakarta.transaction.Transactional;
 
-import lombok.extern.log4j.Log4j2;
 import ma.aftas.aflasclubapi.dto.HuntingRequestDto;
 import ma.aftas.aflasclubapi.dto.HuntingResponseDto;
 import ma.aftas.aflasclubapi.entity.*;
 import ma.aftas.aflasclubapi.exception.business.BadRequestException;
 import ma.aftas.aflasclubapi.exception.business.NotFoundException;
 import ma.aftas.aflasclubapi.exception.business.UserNotFoundException;
-import ma.aftas.aflasclubapi.mappers.PodiumMapper;
 import ma.aftas.aflasclubapi.web.repository.*;
 import ma.aftas.aflasclubapi.web.service.HuntingService;
-import org.apache.juli.logging.Log;
 import org.springframework.stereotype.Service;
 
 
-import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
@@ -32,18 +27,17 @@ public class HuntingServiceImpl implements HuntingService {
     private final MemberRepository memberRepository ;
     private final RankingRepository rankingRepository;
     private final HuntingRepository huntingRepository;
-    private Logger log = Logger.getLogger(HuntingServiceImpl.class.getName());
-    private EntityManager em ;
+    private final Logger log = Logger.getLogger(HuntingServiceImpl.class.getName());
     public HuntingServiceImpl(CompetitionRepository competitionRepository, FishRepository fishRepository,
                               MemberRepository memberRepository,
-                              RankingRepository rankingRepository, HuntingRepository huntingRepository,
-                              EntityManager em) {
+                              RankingRepository rankingRepository, HuntingRepository huntingRepository
+                              ) {
         this.competitionRepository = competitionRepository;
         this.fishRepository = fishRepository;
         this.memberRepository = memberRepository;
         this.rankingRepository= rankingRepository;
         this.huntingRepository = huntingRepository;
-        this.em = em;
+
     }
 
     @Override
@@ -98,20 +92,20 @@ public class HuntingServiceImpl implements HuntingService {
         }
 
 //        Ranking ranking = findRankingByMemberAndCompetition(competition , member);
-        //TODO BUG: FIX RANKING RETURN OLD VALUE SCORE - 1 NEW HUNTING SCORES
+        //TODO :BUG FIX:  RANKING RETURN OLD VALUE SCORE - 1 NEW HUNTING SCORES
         log.info("GET RANKING : "+ranking.getScore());
 
-        updateRankingScore(codeCompetition);
-
-        ranking = findRankingByMemberAndCompetition(competition , member);
-
+        boolean isUpdated =  updateRankingScore(codeCompetition);
+        log.info("IS UPDATED : "+isUpdated);
+        if (!isUpdated){
+            throw new RuntimeException("Error while updating ranking score ");
+        }
         HuntingResponseDto huntingResponseDto = new HuntingResponseDto();
-        log.info("HuntingResponseDto : "+huntingResponseDto.getMessage());
         huntingResponseDto.setMessage("your hunt is done  Successfully Bravo !");
-        huntingResponseDto.setPodiumDto(PodiumMapper.INSTANCE.toDto(ranking));
 
         return huntingResponseDto;
     }
+
 
 
 
@@ -127,9 +121,9 @@ public class HuntingServiceImpl implements HuntingService {
         Competition  competition= this.competitionRepository.listerLesCompetitionParCode(codeCompetition).orElseThrow(()-> new NotFoundException("this competition doesn't exit's "));
         competition.getMembers().forEach((member)->{
             AtomicInteger score = new AtomicInteger(0);
-            member.getHuntings().forEach((hunting)->{
-                score.set(score.get()+hunting.getNumberOfFish()*hunting.getFish().getLevel().getPoints());
-            });
+            for (Hunting hunting : member.getHuntings()) {
+                score.set(score.get() + hunting.getNumberOfFish() * hunting.getFish().getLevel().getPoints());
+            }
             Ranking ranking = this.rankingRepository.findRankingsByCompetitionIdAndMemberId(competition.getCode(), member.getNum()).orElseThrow(()->
                     new NotFoundException("The Member with identityNumber "+member.getIdentityNumber() +" and competition "+codeCompetition +" they didn't exists ")
             );

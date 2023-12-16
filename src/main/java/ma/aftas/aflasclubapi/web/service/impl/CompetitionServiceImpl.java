@@ -169,6 +169,15 @@ public class CompetitionServiceImpl implements CompetitionService  {
         return competitions.map(CompetitionMapper.INSTANCE::toDto);
     }
 
+    @Override
+    public CompetitionDto getCompetitionByCode(String code) {
+        return this.competitionRepository.listerLesCompetitionParCode(code).map(competition -> {
+            CompetitionDto competitionDto = CompetitionMapper.INSTANCE.toDto(competition);
+            competitionDto.setStatus(StatusCompeition.ENCOURS);
+            return competitionDto;
+        }).orElseThrow(()->new NotFoundException("Competition not found with this code"));
+    }
+
     private Page<CompetitionDto> getLesCompetitionParStatus(String status, PageRequest pageRequest) {
         LocalDate today = LocalDate.now(ZoneId.systemDefault());
 

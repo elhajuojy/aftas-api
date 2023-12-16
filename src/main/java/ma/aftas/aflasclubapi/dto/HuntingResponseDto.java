@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class HuntingResponseDto {
     private String message ;
-    private PodiumDto podiumDto;
+//    private PodiumDto podiumDto;
 }
 
 

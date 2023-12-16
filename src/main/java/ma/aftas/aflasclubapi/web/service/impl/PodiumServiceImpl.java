@@ -15,8 +15,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import static ma.aftas.aflasclubapi.util.AftasUtil.getPagePathQueryChecker;
 
@@ -48,6 +51,7 @@ public class PodiumServiceImpl implements PodiumService {
 
     @Override
     public PodiumCompetitionDto affichePodiumCompetition(String code, Map<String, String> queryParams) {
+        updateRankingRank(code);
         PodiumCompetitionDto podiumCompetitionDto = new PodiumCompetitionDto();
         // : FIND THOSE SPECIFIC COMPETITION AND CHECK
         Optional<Competition> competition = this.competitionRepository.listerLesCompetitionParCode(code);
@@ -64,11 +68,32 @@ public class PodiumServiceImpl implements PodiumService {
         PageRequest pageRequest;
         // : SORT BY SCORE QUERY PARAMETER
 
+
         pageRequest = PageRequest.of(pagePathQueryChecker.page(), pagePathQueryChecker.size(), querySortPathExtracter(queryParams));
         // : FIND ALL RELATED MEMBER'S TO THIS COMPLETION AND THEIR  RANKING ALSO
         podiumCompetitionDto.setPodium(this.rankingRepository.findRankingsByCompetitionId(code,pageRequest).map(PodiumMapper.INSTANCE::toDto));
 
         return podiumCompetitionDto;
+    }
+
+    private void updateRankingRank(String codeCompetition) {
+        List<Ranking> sortedRankings = this.rankingRepository.findRankingsByCompetitionId(codeCompetition,null).getContent();
+
+        List<Ranking> finalSortedRankings = sortedRankings;
+        sortedRankings = IntStream.range(0, sortedRankings.size())
+                .mapToObj(index -> {
+                    Ranking ranking = finalSortedRankings.get(index);
+                    return ranking;
+                })
+                .sorted(Comparator.comparingInt(Ranking::getScore).reversed()).toList();
+
+        List<Ranking> finalSortedRankings1 = sortedRankings;
+        sortedRankings.forEach(ranking -> {
+            //TODO : UPDATE RANKING RANK .
+//            log.info("Member : "+ranking.getMember().getName() + " Score : "+ranking.getScore());
+            ranking.setRank(finalSortedRankings1.indexOf(ranking)+1);
+        });
+        this.rankingRepository.saveAll(sortedRankings);
     }
 
     private Sort querySortPathExtracter(Map<String, String> queryParams) {

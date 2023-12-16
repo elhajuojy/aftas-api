@@ -7,6 +7,7 @@ import ma.aftas.aflasclubapi.dto.MemberResponseDto;
 import ma.aftas.aflasclubapi.web.service.MemberService;
 import ma.aftas.aflasclubapi.web.service.impl.CompetitionServiceImpl;
 import org.slf4j.Logger;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -39,12 +40,19 @@ public class MemberController {
 
     @GetMapping("/search")
     // :  recherche d’un adhérent par numéro, nom, ou prénom .
-    public ResponseEntity<MemberDto> findUserByDifferenceParams(@RequestParam Map<String,String> queryParams,
-                                                                 @RequestHeader("Authorization") String token
+    public ResponseEntity<MemberDto> findUserByDifferenceParams(@RequestParam Map<String,String> queryParams
+
                                                                  ){
 
         log.info("Controller Request Params : "+queryParams.toString());
         return ResponseEntity.ok(this.memberService.findMemberByMoreThanParam(queryParams));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<MemberDto>> listerLesMembres(@RequestParam Map<String,String> queryParams
+                                                            ){
+        log.info("Controller Request Params : "+queryParams.toString());
+        return ResponseEntity.ok(this.memberService.listerLesMembres(queryParams));
     }
 
 

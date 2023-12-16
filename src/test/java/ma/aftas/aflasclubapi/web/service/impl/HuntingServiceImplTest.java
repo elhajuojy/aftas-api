@@ -1,6 +1,5 @@
 package ma.aftas.aflasclubapi.web.service.impl;
 
-import jdk.jfr.Description;
 import ma.aftas.aflasclubapi.entity.Hunting;
 import ma.aftas.aflasclubapi.entity.Ranking;
 import ma.aftas.aflasclubapi.web.repository.HuntingRepository;
@@ -11,13 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.objenesis.ObjenesisException;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
-import static net.bytebuddy.matcher.ElementMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -60,6 +57,9 @@ class HuntingServiceImplTest {
             ranking.setScore(rank * 10);
             return ranking;
         }).toList();
+        assertNotNull(rankings);
+        rankings.get(1).setScore(10);
+        assertEquals(rankings.get(0).getScore(), rankings.get(1).getScore());
 
 
         List<Ranking> sortedList = IntStream.range(0, rankings.size())
@@ -68,20 +68,33 @@ class HuntingServiceImplTest {
                     return ranking;
                 })
                 .sorted(Comparator.comparingInt(Ranking::getScore).reversed()).toList();
-        int index =1 ;
+
+        assertEquals(10, rankings.get(0).getScore());
+        assertEquals(40,sortedList.get(0).getScore());
+
+
+
+
+
+        AtomicInteger index = new AtomicInteger(1);
         sortedList.forEach((element)->{
             //TODO: TEST FOREACH sortedlist
+            element.setRank(index.getAndIncrement());
+
         });
 
+
+
+
+        assertNotNull(rankings);
+        assertEquals(1,sortedList.get(0).getRank());
+        assertEquals(2,sortedList.get(1).getRank());
         // BASED ON THEIR SCORE WHICH I NEED TO CALCULATE IT FROM THE HUNTING FOR EACH MEMBER
+        
+
 
         // Now, assuming Ranking has a method to get the score, you can assert like this
-        assertEquals(10, rankings.get(0).getScore());
 
-        assertEquals(1,rankings.get(0).getRank());
-
-        assertEquals(40,sortedList.get(0).getScore());
-        assertEquals(1,sortedList.get(0).getRank());
 
         //TODO : what if there's to many score's with the same
         // value you need to rank them with the same rank

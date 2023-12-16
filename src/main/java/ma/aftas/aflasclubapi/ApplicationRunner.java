@@ -2,15 +2,9 @@ package ma.aftas.aflasclubapi;
 
 import com.github.javafaker.Faker;
 import lombok.extern.log4j.Log4j2;
-import ma.aftas.aflasclubapi.entity.Competition;
-import ma.aftas.aflasclubapi.entity.Fish;
-import ma.aftas.aflasclubapi.entity.Level;
-import ma.aftas.aflasclubapi.entity.Member;
+import ma.aftas.aflasclubapi.entity.*;
 import ma.aftas.aflasclubapi.enums.IdentityDocumentType;
-import ma.aftas.aflasclubapi.web.repository.CompetitionRepository;
-import ma.aftas.aflasclubapi.web.repository.FishRepository;
-import ma.aftas.aflasclubapi.web.repository.LevelRepository;
-import ma.aftas.aflasclubapi.web.repository.MemberRepository;
+import ma.aftas.aflasclubapi.web.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -20,16 +14,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-@Component
-@Log4j2
+//@Component
+//@Log4j2
 public class ApplicationRunner implements CommandLineRunner {
 
     private MemberRepository memberRepository ;
     private CompetitionRepository competitionRepository ;
     private LevelRepository levelRepository;
     private FishRepository fishRepository;
+    private RankingRepository rankingRepository;
     Faker faker ;
     Map<String, String> moroccoCityCodes = new HashMap<>();
 
@@ -40,17 +36,40 @@ public class ApplicationRunner implements CommandLineRunner {
             MemberRepository memberRepository,
             CompetitionRepository competitionRepository,
             LevelRepository levelRepository,
-            FishRepository fishRepository
+            FishRepository fishRepository,
+            RankingRepository rankingRepository
     ) {
         this.memberRepository = memberRepository;
         this.competitionRepository = competitionRepository;
         this.faker = new Faker();
         this.levelRepository = levelRepository;
         this.fishRepository = fishRepository;
+        this.rankingRepository = rankingRepository;
     }
 
     @Override
     public void run(String... args) throws Exception {
+
+        //TODO : GET ALL RANKING FROM  COMPETITIONS BY CODE AND THAN  STORE THE
+        Collection<Ranking> rankings  = this.rankingRepository.findRankingsByCompetitionId("sms-20-12-23",null).getContent();
+        rankings.forEach(ranking -> {
+            System.out.println("Member : "+ranking.getMember().getName() + " Score : "+ranking.getScore());
+        });
+        //TODO : GET ALL RANKING FROM  COMPETITIONS BY CODE AND THAN  STORE THE
+        List<Ranking> sortedRankings = new ArrayList<>(rankings);
+        sortedRankings.sort(Comparator.comparing(Ranking::getScore).reversed());
+        sortedRankings.forEach(ranking -> {
+            //TODO : UPDATE RANKING RANK .
+            System.out.println("Member : "+ranking.getMember().getName() + " Score : "+ranking.getScore());
+            ranking.setRank(sortedRankings.indexOf(ranking)+1);
+        });
+        this.rankingRepository.saveAll(sortedRankings);
+        //
+        sortedRankings.get(0);
+    }
+
+
+    public void saveFakeData(){
         Map<Integer , IdentityDocumentType> identityDocumentTypeMap = Map.of(
                 1,IdentityDocumentType.CIN,
                 2,IdentityDocumentType.CATRE_PRESIDENCE,
@@ -88,7 +107,7 @@ public class ApplicationRunner implements CommandLineRunner {
                     member.setNationality(faker.country().name());
                     member.setNum(faker.number().randomDigit());
                     member.setIdentityDocumentType(
-                        identityDocumentTypeMap.get(faker.number().numberBetween(1,3))
+                            identityDocumentTypeMap.get(faker.number().numberBetween(1,3))
                     );
                     member.setIdentityNumber("HH1222-"+name);
                     member.setAccessionDate(LocalDateTime.now());
@@ -103,10 +122,7 @@ public class ApplicationRunner implements CommandLineRunner {
         });
 
         fakeFishesStore();
-
-
     }
-
     private List<Competition> fakeCompetitions() {
         return Stream.of("sms","ngs","lsg","hgs").map((code)->{
             Competition competition = new Competition();

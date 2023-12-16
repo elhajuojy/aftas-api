@@ -17,7 +17,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 public class MemberDto {
-
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Integer num;
     private String name;
     @NotNull
     private String familyName;
@@ -28,4 +29,7 @@ public class MemberDto {
     private IdentityDocumentType identityDocumentType;
     @NotNull
     private String identityNumber;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private LocalDateTime accessionDate;
 }
