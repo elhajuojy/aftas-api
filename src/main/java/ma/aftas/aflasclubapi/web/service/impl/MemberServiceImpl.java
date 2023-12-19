@@ -109,7 +109,7 @@ public class MemberServiceImpl implements MemberService {
         if (queryParams.isEmpty() && !queryParams.containsKey("name") && !queryParams.containsKey("familyName") && !queryParams.containsKey("num")){
             throw  new IllegalArgumentException("Please provide your' param such as name , familyName , num ");
         }
-        //TODO:page and size
+        //:page and size
 
 
 

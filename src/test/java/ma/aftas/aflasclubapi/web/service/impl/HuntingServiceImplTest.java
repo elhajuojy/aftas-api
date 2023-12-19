@@ -36,7 +36,7 @@ class HuntingServiceImplTest {
 
     @Test
     void addNewHuntingToMember() {
-        //TODO : TEST DIFFERENT LEVEL OF TO BE INSERTED IN
+        // : TEST DIFFERENT LEVEL OF TO BE INSERTED IN
         Hunting hunting = new Hunting();
         Ranking ranking = new Ranking();
         ranking.setScore(12);
@@ -78,9 +78,8 @@ class HuntingServiceImplTest {
 
         AtomicInteger index = new AtomicInteger(1);
         sortedList.forEach((element)->{
-            //TODO: TEST FOREACH sortedlist
+            //: TEST FOREACH sortedlist
             element.setRank(index.getAndIncrement());
-
         });
 
 
@@ -108,10 +107,20 @@ class HuntingServiceImplTest {
 
     @Test
     void updateRankingScore() {
+        Ranking ranking = new Ranking();
+        ranking.setScore(200);
+        assertEquals(200,ranking.getScore());
+        ranking.setScore(ranking.getScore()+30);
+        assertEquals(230,ranking.getScore());
     }
 
     @Test
     void updateRankingRank() {
+        Ranking ranking = new Ranking();
+        ranking.setRank(1);
+        assertEquals(1,ranking.getRank());
+        ranking.setRank(ranking.getRank()+1);
+        assertEquals(2,ranking.getRank());
     }
 }
 

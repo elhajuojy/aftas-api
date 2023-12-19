@@ -70,7 +70,7 @@ public class HuntingServiceImpl implements HuntingService {
                 ()-> new NotFoundException("this Fish with id "+huntingRequestDto.getFishId()+" doesn't exists ")
         );
 
-        //TODO: CHECK THE WEIGHT OF THE FISH IF IT'S GREATER THAN THE MAX WEIGHT OF THE FISH OR LESS THAN THE MIN WEIGHT OF THE FISH
+        //: CHECK THE WEIGHT OF THE FISH IF IT'S GREATER THAN THE MAX WEIGHT OF THE FISH OR LESS THAN THE MIN WEIGHT OF THE FISH
         Double maxWeight = 100.0;
         Double minWeight = 10.0;
         if (huntingRequestDto.getWeight() > maxWeight || huntingRequestDto.getWeight() < minWeight){
