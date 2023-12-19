@@ -23,8 +23,15 @@ public class HuntingController {
     @PostMapping()
     public ResponseEntity<HuntingResponseDto> addNewHuntingToMember(@PathVariable("code") String code ,
                                                                     @RequestBody HuntingRequestDto huntingRequestDto){
-
         return  ResponseEntity.ok(this.huntingService.addNewHuntingToMember(code,huntingRequestDto));
+
+    }
+
+    @GetMapping
+    public ResponseEntity<HuntingResponseDto> getHuntingByCompetitionId(@PathVariable("code") String code
+                                                                   ){
+        return ResponseEntity.ok(this.huntingService.getHuntingByCompetitionId(code));
+
 
     }
 }

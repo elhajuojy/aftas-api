@@ -1,5 +1,6 @@
 package ma.aftas.aflasclubapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 

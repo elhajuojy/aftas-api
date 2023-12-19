@@ -49,10 +49,10 @@ public class HuntingServiceImpl implements HuntingService {
         }
 
         // : IF THE FISH ALREADY EXISTS  CHECK THE MEMBER ALSO OR THROW EXCEPTION
-        Member member = this.memberRepository.findByIdentityNumber(
-                huntingRequestDto.getIdentityNumber()).orElseThrow(
+        Member member = this.memberRepository.findAllByNum(
+                huntingRequestDto.getNum()).orElseThrow(
                         ()-> new UserNotFoundException(
-                                "Member with Identity number :"+huntingRequestDto.getIdentityNumber()+" does not exists ")
+                                "Member with Identity number :"+huntingRequestDto.getNum()+" does not exists ")
         );
         // : NEXT CHECK THE IF THE COMPETITION ALREADY EXISTS ELSE THROW EXCEPTION
 
@@ -70,30 +70,29 @@ public class HuntingServiceImpl implements HuntingService {
                 ()-> new NotFoundException("this Fish with id "+huntingRequestDto.getFishId()+" doesn't exists ")
         );
 
+        //TODO: CHECK THE WEIGHT OF THE FISH IF IT'S GREATER THAN THE MAX WEIGHT OF THE FISH OR LESS THAN THE MIN WEIGHT OF THE FISH
+        Double maxWeight = 100.0;
+        Double minWeight = 10.0;
+        if (huntingRequestDto.getWeight() > maxWeight || huntingRequestDto.getWeight() < minWeight){
+            throw new BadRequestException("The weight of the fish must be between "+minWeight+" and "+maxWeight);
+        }
 
         AtomicBoolean exists = new AtomicBoolean(false);
+        log.info("GET HUNTING MEMBER OF FISH : "+huntingRequestDto.getNumber_of_fish());
         ranking.getMember().getHuntings().forEach((hunting)->{
                      if (hunting.getFish().getId().equals(huntingRequestDto.getFishId())){
-                         hunting.setNumberOfFish(hunting.getNumberOfFish()+1);
+                         hunting.setNumberOfFish(hunting.getNumberOfFish()+ huntingRequestDto.getNumber_of_fish());
                          log.info("hunting : "+hunting.getFish().getName()+" "+hunting.getNumberOfFish()+" "+hunting.getMember().getName()+" "+hunting.getCompetition().getCode());
                          exists.set(true);
                          this.huntingRepository.save(hunting);
                      }
         });
 
-        if (!exists.get()){
-            Hunting newHunting = new Hunting();
-            newHunting.setNumberOfFish(1);
-            newHunting.setFish(fish);
-            newHunting.setMember(member);
-            newHunting.setCompetition(competition);
-            log.info("newHunting : "+newHunting.getFish().getName()+" "+newHunting.getNumberOfFish()+" "+newHunting.getMember().getName()+" "+newHunting.getCompetition().getCode());
-            this.huntingRepository.save(newHunting);
-        }
+        saveHuntingIfNotExists(huntingRequestDto, exists, fish, member, competition);
 
 //        Ranking ranking = findRankingByMemberAndCompetition(competition , member);
         //TODO :BUG FIX:  RANKING RETURN OLD VALUE SCORE - 1 NEW HUNTING SCORES
-        log.info("GET RANKING : "+ranking.getScore());
+        log.info("GET RANKING SCORE : "+ranking.getScore());
 
         boolean isUpdated =  updateRankingScore(codeCompetition);
         log.info("IS UPDATED : "+isUpdated);
@@ -102,11 +101,25 @@ public class HuntingServiceImpl implements HuntingService {
         }
         HuntingResponseDto huntingResponseDto = new HuntingResponseDto();
         huntingResponseDto.setMessage("your hunt is done  Successfully Bravo !");
-
         return huntingResponseDto;
     }
 
+    private void saveHuntingIfNotExists(HuntingRequestDto huntingRequestDto, AtomicBoolean exists, Fish fish, Member member, Competition competition) {
+        if (!exists.get()){
+            Hunting newHunting = new Hunting();
+            newHunting.setNumberOfFish(huntingRequestDto.getNumber_of_fish());
+            newHunting.setFish(fish);
+            newHunting.setMember(member);
+            newHunting.setCompetition(competition);
+            log.info("newHunting : "+newHunting.getFish().getName()+" "+newHunting.getNumberOfFish()+" "+newHunting.getMember().getName()+" "+newHunting.getCompetition().getCode());
+            this.huntingRepository.save(newHunting);
+        }
+    }
 
+    @Override
+    public HuntingResponseDto getHuntingByCompetitionId(String code) {
+        return null;
+    }
 
 
     private Ranking findRankingByMemberAndCompetition(Competition competition ,Member member) {
