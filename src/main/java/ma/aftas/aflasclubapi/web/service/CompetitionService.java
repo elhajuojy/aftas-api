@@ -14,8 +14,3 @@ public interface CompetitionService {
     CompetitionDto getCompetitionByCode(String code);
 }
 
-
-//    https://api.fakecompany.com/v1/restaurants?type=thai
-//    https://api.fakecompany.com/v1/restaurants?size=10&page=2
-//    https://api.fakecompany.com/v1/restaurants?size=10&page=2&sort=rating,desc
-// tris , pagination , filter's , recherche

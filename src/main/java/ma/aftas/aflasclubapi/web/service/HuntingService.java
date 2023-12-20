@@ -10,5 +10,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface HuntingService {
     public HuntingResponseDto addNewHuntingToMember( String codeCompetition , HuntingRequestDto huntingRequestDto);
 
-    HuntingResponseDto getHuntingByCompetitionId(String code);
+    public HuntingResponseDto getHuntingByCompetitionId(String code);
 }

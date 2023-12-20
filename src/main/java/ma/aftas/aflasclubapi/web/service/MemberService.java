@@ -12,7 +12,6 @@ public interface MemberService {
 
     public MemberResponseDto addMember(MemberDto memberDto);
     public Optional<MemberDto> findMemberByNum(Integer num);
-
     public MemberDto findMemberByMoreThanParam(Map<String, String> queryParams);
     public Page<MemberDto> listerLesMembres(Map<String, String> queryParams);
 

@@ -6,10 +6,6 @@ import ma.aftas.aflasclubapi.entity.Fish;
 import java.util.List;
 
 public interface FishService {
-
-
-
     public List<FishDto> getAllFishes();
-
-    FishDto addNewFish(FishDto fishDto);
+    public FishDto addNewFish(FishDto fishDto);
 }
