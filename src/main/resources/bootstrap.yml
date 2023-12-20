@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: aftas-service
+  cloud:
+    config:
+      uri: http://localhost:8071
+  profiles:
+    active: default
