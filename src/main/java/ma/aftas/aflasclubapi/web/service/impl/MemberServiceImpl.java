@@ -105,7 +105,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberDto findMemberByMoreThanParam(Map<String, String> queryParams) {
         Member member  = new Member();
-        //: CHECK IF THE QUERY PARAMS IS EMPTY OR NOT HAVING THE REQUIRED PARAMS SUCH AS NAME , FAMILYNAME , NUM
+        //: CHECK IF THE QUERY PARAMS IS EMPTY OR NOT HAVING THE REQUIRED PARAMS SUCH AS NAME , FAMILY NAME , NUM
         if (queryParams.isEmpty() && !queryParams.containsKey("name") && !queryParams.containsKey("familyName") && !queryParams.containsKey("num")){
             throw  new IllegalArgumentException("Please provide your' param such as name , familyName , num ");
         }
@@ -130,6 +130,9 @@ public class MemberServiceImpl implements MemberService {
                     ()->new UserNotFoundException("The member with num "+queryParams.get("num")+" was not found")
             );
         }
+        //TODO : ELSE NOTHING WAS FOUND
+        //TODO : FIND BY EVERYTHING OR PARAMS NATIVE QUERY OR JPA QUERY 
+
 
 
         return MemberMapper.INSTANCE.toDto(member);

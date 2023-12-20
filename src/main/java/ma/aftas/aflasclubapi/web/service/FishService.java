@@ -11,4 +11,5 @@ public interface FishService {
 
     public List<FishDto> getAllFishes();
 
+    FishDto addNewFish(FishDto fishDto);
 }

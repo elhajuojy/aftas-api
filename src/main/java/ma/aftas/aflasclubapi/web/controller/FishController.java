@@ -4,10 +4,7 @@ package ma.aftas.aflasclubapi.web.controller;
 import ma.aftas.aflasclubapi.dto.FishDto;
 import ma.aftas.aflasclubapi.entity.Fish;
 import ma.aftas.aflasclubapi.web.service.FishService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,4 +24,11 @@ public class FishController {
         return this
                 .fishService.getAllFishes();
     }
+
+    @PostMapping
+    public FishDto addNewFish(@RequestBody FishDto fishDto){
+        return this.fishService.addNewFish(fishDto);
+    }
+
+
 }
