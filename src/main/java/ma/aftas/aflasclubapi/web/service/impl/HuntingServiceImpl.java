@@ -6,11 +6,12 @@ import jakarta.transaction.Transactional;
 import ma.aftas.aflasclubapi.dto.HuntingRequestDto;
 import ma.aftas.aflasclubapi.dto.HuntingResponseDto;
 import ma.aftas.aflasclubapi.entity.*;
-import ma.aftas.aflasclubapi.exception.business.BadRequestException;
-import ma.aftas.aflasclubapi.exception.business.NotFoundException;
-import ma.aftas.aflasclubapi.exception.business.UserNotFoundException;
+
 import ma.aftas.aflasclubapi.web.repository.*;
 import ma.aftas.aflasclubapi.web.service.HuntingService;
+import ma.yc.api.common.exception.business.BadRequestException;
+import ma.yc.api.common.exception.business.NotFoundException;
+import ma.yc.api.common.exception.business.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 

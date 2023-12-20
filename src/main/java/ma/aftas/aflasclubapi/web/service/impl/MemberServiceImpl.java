@@ -1,20 +1,18 @@
 package ma.aftas.aflasclubapi.web.service.impl;
 
-import com.github.javafaker.Faker;
+
 import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import ma.aftas.aflasclubapi.dto.MemberDto;
 import ma.aftas.aflasclubapi.dto.MemberResponseDto;
 import ma.aftas.aflasclubapi.entity.Member;
-import ma.aftas.aflasclubapi.exception.business.AlreadyExistsException;
-import ma.aftas.aflasclubapi.exception.business.BadRequestException;
-import ma.aftas.aflasclubapi.exception.business.UserNotFoundException;
+import ma.yc.api.common.exception.business.AlreadyExistsException;
+import ma.yc.api.common.exception.business.BadRequestException;
+import ma.yc.api.common.exception.business.UserNotFoundException;
 import ma.aftas.aflasclubapi.mappers.MemberMapper;
 import ma.aftas.aflasclubapi.util.AftasUtil;
 import ma.aftas.aflasclubapi.web.repository.MemberRepository;
 import ma.aftas.aflasclubapi.web.service.MemberService;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -131,7 +129,7 @@ public class MemberServiceImpl implements MemberService {
             );
         }
         //TODO : ELSE NOTHING WAS FOUND
-        //TODO : FIND BY EVERYTHING OR PARAMS NATIVE QUERY OR JPA QUERY 
+        //TODO : FIND BY EVERYTHING OR PARAMS NATIVE QUERY OR JPA QUERY
 
 
 
