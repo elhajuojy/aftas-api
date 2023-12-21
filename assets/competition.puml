@@ -1,0 +1,70 @@
+@startuml
+'https://plantuml.com/class-diagram
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class competition {
+   created_at: varchar(255)
+   updated_at: timestamp(6)
+   version: varchar(255)
+   amount: double precision
+   code: varchar(255)
+   date: date
+   end_time: time(6)
+   location: varchar(255)
+   number_of_participants: integer
+   start_time: time(6)
+   id: integer
+}
+class fish {
+   name: varchar(255)
+   average_weight: double precision
+   level_id: integer
+   id: integer
+}
+class hunting {
+   created_at: varchar(255)
+   updated_at: timestamp(6)
+   version: varchar(255)
+   number_of_fish: integer
+   competition_id: integer
+   fish_id: integer
+   member_num: integer
+   id: integer
+}
+class level {
+   created_at: varchar(255)
+   updated_at: timestamp(6)
+   version: varchar(255)
+   code: varchar(255)
+   description: varchar(255)
+   points: integer
+   id: integer
+}
+class member {
+   accession_date: timestamp(6)
+   family_name: varchar(255)
+   identity_document_type: varchar(255)
+   identity_number: varchar(255)
+   name: varchar(255)
+   nationality: varchar(255)
+   nationality_flag: varchar(255)
+   num: integer
+}
+class ranking {
+   rank: integer
+   score: integer
+   competition_id: integer
+   member_num: integer
+}
+
+fish         -[#595959,plain]-^  level       : "level_id:id"
+hunting      -[#595959,plain]-^  competition : "competition_id:id"
+hunting      -[#595959,plain]-^  fish        : "fish_id:id"
+hunting      -[#595959,plain]-^  member      : "member_num:num"
+ranking      -[#595959,plain]-^  competition : "competition_id:id"
+ranking      -[#595959,plain]-^  member      : "member_num:num"
+@enduml

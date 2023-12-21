@@ -73,9 +73,6 @@ class HuntingServiceImplTest {
         assertEquals(40,sortedList.get(0).getScore());
 
 
-
-
-
         AtomicInteger index = new AtomicInteger(1);
         sortedList.forEach((element)->{
             //: TEST FOREACH sortedlist

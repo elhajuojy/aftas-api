@@ -6,11 +6,10 @@ import org.springframework.data.domain.Page;
 import java.util.Map;
 
 
-public interface CompetitionService {
+public interface CompetitionService extends PageableCompetitionService{
 
     public CompetitionDto ajouterCompetition(CompetitionRequestDto competitionRequestDto);
     public MemberCompetitionResponse inscriptionMembreDansCompetition(MemberCompetitionRequest memberCompetitionRequest);
-    public Page<CompetitionDto> ListerLesCompetition(Map<String, String> queryParams);
     CompetitionDto getCompetitionByCode(String code);
 }
 
