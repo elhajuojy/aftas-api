@@ -54,7 +54,7 @@ public class MemberServiceImpl implements MemberService {
 
             Member member = this.memberMapper.toEntity(memberDto);
             member.setAccessionDate(LocalDateTime.now());
-            //TODO:GENERATE NUM FOR MEMBER SO HE CAN USED IT
+            //:GENERATE NUM FOR MEMBER SO HE CAN USED IT
             Integer code = 0;
             member = this.memberRepository.save(member);
             return this.memberMapper.toDtoResponse(member);

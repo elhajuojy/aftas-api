@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ma.aftas.aflasclubapi.entity.Level;
 
 @Data
 @AllArgsConstructor
@@ -12,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class FishRequestDto {
     private String Name;
     private Double averageWeight;
-    @JsonProperty("Level")
-    private LevelDto levelDto ;
+    @JsonProperty("level_id")
+    private Integer LevelId ;
 }

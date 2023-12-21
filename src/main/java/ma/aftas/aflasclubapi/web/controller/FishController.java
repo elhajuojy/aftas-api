@@ -2,6 +2,7 @@ package ma.aftas.aflasclubapi.web.controller;
 
 
 import ma.aftas.aflasclubapi.dto.FishDto;
+import ma.aftas.aflasclubapi.dto.FishRequestDto;
 import ma.aftas.aflasclubapi.entity.Fish;
 import ma.aftas.aflasclubapi.web.service.FishService;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class FishController {
     }
 
     @PostMapping
-    public FishDto addNewFish(@RequestBody FishDto fishDto){
+    public FishDto addNewFish(@RequestBody FishRequestDto fishDto){
         return this.fishService.addNewFish(fishDto);
     }
 

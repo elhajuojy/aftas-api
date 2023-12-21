@@ -50,16 +50,16 @@ public class ApplicationRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        //TODO : GET ALL RANKING FROM  COMPETITIONS BY CODE AND THAN  STORE THE
+        // : GET ALL RANKING FROM  COMPETITIONS BY CODE AND THAN  STORE THE
         Collection<Ranking> rankings  = this.rankingRepository.findRankingsByCompetitionId("sms-20-12-23",null).getContent();
         rankings.forEach(ranking -> {
             System.out.println("Member : "+ranking.getMember().getName() + " Score : "+ranking.getScore());
         });
-        //TODO : GET ALL RANKING FROM  COMPETITIONS BY CODE AND THAN  STORE THE
+        // : GET ALL RANKING FROM  COMPETITIONS BY CODE AND THAN  STORE THE
         List<Ranking> sortedRankings = new ArrayList<>(rankings);
         sortedRankings.sort(Comparator.comparing(Ranking::getScore).reversed());
         sortedRankings.forEach(ranking -> {
-            //TODO : UPDATE RANKING RANK .
+            // : UPDATE RANKING RANK .
             System.out.println("Member : "+ranking.getMember().getName() + " Score : "+ranking.getScore());
             ranking.setRank(sortedRankings.indexOf(ranking)+1);
         });

@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FishDto {
-    private Integer id;
+    private Integer id ;
     private String Name;
     private Double averageWeight;
-    private String LevelId ;
+    private Integer LevelId ;
 
 }

@@ -1,6 +1,7 @@
 package ma.aftas.aflasclubapi.web.service.impl;
 
 import ma.aftas.aflasclubapi.dto.FishDto;
+import ma.aftas.aflasclubapi.dto.FishRequestDto;
 import ma.aftas.aflasclubapi.entity.Fish;
 import ma.aftas.aflasclubapi.entity.Level;
 import ma.aftas.aflasclubapi.mappers.FishMapper;
@@ -34,22 +35,24 @@ public class FishServiceImpl implements FishService {
     }
 
     @Override
-    public FishDto addNewFish(FishDto fishDto) {
+    public FishDto addNewFish(FishRequestDto fishDto) {
         //VALIDATION:
         if (fishDto == null){
             throw new IllegalArgumentException("FishDto is null");
         }
-        if (fishDto.getLevelId() != null){
+        if (fishDto.getLevelId() == null){
             throw new IllegalArgumentException("LevelId is null");
         }
         Fish fish = this.fishMapper.toEntity(fishDto);
 
         //FIND LEVEL BY ID: THEN SET IT TO FISH:
-        Integer levelId = Integer.parseInt(fishDto.getLevelId());
-        Level level = this.levelRepository.findById(levelId).orElseThrow(
+
+        Level level = this.levelRepository.findById(fishDto.getLevelId()).orElseThrow(
                 () -> new IllegalArgumentException("Level not found")
         );
 
+
+        fish = this.fishRepository.save(fish);
         fish.setLevel(level);
         this.fishRepository.save(fish);
         return this.fishMapper.toDto(fish);
