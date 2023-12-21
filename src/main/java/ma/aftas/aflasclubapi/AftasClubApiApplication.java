@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan("ma.yc.api")
 public class AftasClubApiApplication {
 
+
     public static void main(String[] args) {
         SpringApplication.run(AftasClubApiApplication.class, args);
 

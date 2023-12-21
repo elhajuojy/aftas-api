@@ -50,7 +50,7 @@ public class CompetitionServiceImpl implements CompetitionService  {
 
     @Override
     public CompetitionDto ajouterCompetition(CompetitionRequestDto competitionRequestDto) {
-        ajouterCompetitionValidationDto(competitionRequestDto);
+//        ajouterCompetitionValidationDto(competitionRequestDto);
 
         // : CHECK IF THERE'S ALREADY EVENT IN THE SAME DATE IF EXIT'S THROW ALREADY RESERVED EXCEPTION
         if(this.competitionRepository.listerLesCompetitionParDate(competitionRequestDto.getDate()).isPresent()){
@@ -77,7 +77,7 @@ public class CompetitionServiceImpl implements CompetitionService  {
         Map<String,String> errors = new HashMap<>();
         if (competitionRequestDto != null){
             if (competitionRequestDto.getDate() == null){
-                errors.put("date","Date de competition est obligatoire");
+                errors.put("date","");
             }
             if (competitionRequestDto.getStartTime() == null){
                 errors.put("startTime","Heure de debut de competition est obligatoire");
@@ -88,9 +88,11 @@ public class CompetitionServiceImpl implements CompetitionService  {
             if (competitionRequestDto.getLocation() == null || competitionRequestDto.getLocation().isEmpty()){
                 errors.put("location","Location de competition est obligatoire");
             }
+
             if (competitionRequestDto.getAmount() == null){
                 errors.put("amount","Montant de competition est obligatoire");
             }
+
             if (!errors.isEmpty()){
                 throw new BadRequestException("Input validation exception's ",errors);
             }

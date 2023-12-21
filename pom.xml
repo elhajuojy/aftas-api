@@ -23,6 +23,7 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
+
         <dependency>
             <groupId>ma.yc.api</groupId>
             <artifactId>ma-yc-api-common</artifactId>
